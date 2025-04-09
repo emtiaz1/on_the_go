@@ -1,0 +1,189 @@
+[
+  {
+    "id": "p001",
+    "user": "Atique Enam",
+    "location": "Dhaka",
+    "content": "Unbelievable traffic today at Farmgate. Took me 2 hours to cross just 3 km!",
+    "movement": false,
+    "views": 350,
+    "reactions": {
+      "like": 120,
+      "angry": 54,
+      "sad": 18
+    },
+    "image": "assets/images/post1.png",
+    "tags": ["traffic", "Dhaka", "farmgate"]
+  },
+  {
+    "id": "p002",
+    "user": "Arpon",
+    "location": "Mirpur",
+    "content": "Mirpur road is jammed again. Looks like an accident caused the hold-up.",
+    "movement": false,
+    "views": 28000,
+    "reactions": {
+      "like": 980,
+      "wow": 200,
+      "angry": 400
+    },
+    "image": "assets/images/post2.png",
+    "tags": ["accident", "jam", "Mirpur"]
+  },
+  {
+    "id": "p003",
+    "user": "Rafid",
+    "location": "Chittagong",
+    "content": "Students have blocked the road near New Market demanding better traffic regulation.",
+    "movement": true,
+    "views": 1500,
+    "reactions": {
+      "like": 90,
+      "support": 40,
+      "angry": 150
+    },
+    "image": "assets/images/post3.png",
+    "tags": ["movement", "students", "Chittagong"]
+  },
+  {
+    "id": "p004",
+    "user": "Iftekharul Islam",
+    "location": "Mohakhali",
+    "content": "Stuck at Mohakhali for 45 mins. The bus stand is completely blocked!",
+    "movement": false,
+    "views": 180,
+    "reactions": {
+      "like": 67,
+      "sad": 20,
+      "angry": 13
+    },
+    "image": "assets/images/post4.png",
+    "tags": ["bus", "Mohakhali"]
+  },
+  {
+    "id": "p005",
+    "user": "Emtiaz Ahmed",
+    "location": "Gulistan",
+    "content": "Tailback from Jatrabari to Gulistan reported. Avoid this route!",
+    "movement": false,
+    "views": 320,
+    "reactions": {
+      "like": 50,
+      "angry": 42,
+      "sad": 26
+    },
+    "image": "assets/images/post5.png",
+    "tags": ["tailback", "Gulistan"]
+  },
+  {
+    "id": "p006",
+    "user": "Foujia",
+    "location": "Shahbagh",
+    "content": "Students have organized a march towards Shahbagh demanding safer roads.",
+    "movement": true,
+    "views": 220,
+    "reactions": {
+      "support": 10,
+      "like": 90,
+      "wow": 10
+    },
+    "image": "assets/images/post6.png",
+    "tags": ["protest", "student", "Shahbagh"]
+  },
+  {
+    "id": "p007",
+    "user": "Afrose",
+    "location": "Airport Road",
+    "content": "Another late day due to unbearable jam on Airport Road. Where’s the traffic police?",
+    "movement": false,
+    "views": 190,
+    "reactions": {
+      "angry": 90,
+      "like": 40,
+      "sad": 20
+    },
+    "image": "assets/images/post7.png"
+  },
+  {
+    "id": "p008",
+    "user": "Tanha",
+    "location": "Malibagh",
+    "content": "Bumper to bumper from Kakrail to Malibagh.",
+    "movement": false,
+    "views": 25000,
+    "reactions": {
+      "like": 1200,
+      "angry": 310
+    },
+    "image": "assets/images/post8.png"
+  },
+  {
+    "id": "p009",
+    "user": "Sahan",
+    "location": "Shahbagh",
+    "content": "Public demonstration happening right now. Demands for cleaner public transport.",
+    "movement": true,
+    "views": 27000,
+    "reactions": {
+      "like": 1300,
+      "support": 500,
+      "angry": 110
+    },
+    "image": "assets/images/post9.png"
+  },
+  {
+    "id": "p010",
+    "user": "Asif Shahriar",
+    "location": "Karwan Bazar",
+    "content": "Karwan Bazar traffic at its worst today. Took 90 minutes to get out!",
+    "movement": false,
+    "views": 16000,
+    "reactions": {
+      "like": 400,
+      "sad": 300,
+      "angry": 250
+    },
+    "image": "assets/images/post10.png"
+  },
+  {
+    "id": "p011",
+    "user": "Shoumik",
+    "location": "Dhanmondi 27",
+    "content": "Avoid the road if you're in a hurry. Cars haven’t moved in 30 mins!",
+    "movement": false,
+    "views": 21000,
+    "reactions": {
+      "angry": 700,
+      "like": 650,
+      "wow": 120
+    },
+    "image": "assets/images/post11.png"
+  },
+  {
+    "id": "p012",
+    "user": "kulsum",
+    "location": "Banani",
+    "content": "Congestion near Banani overpass. One lane blocked due to a breakdown.",
+    "movement": false,
+    "views": 120,
+    "reactions": {
+      "like": 50,
+      "sad": 10,
+      "angry": 32
+    },
+    "image": "assets/images/post12.png"
+  },
+  {
+    "id": "p013",
+    "user": "Mokles",
+    "location": "Press Club",
+    "content": "Rally ongoing at Press Club. Protest against recent fare hikes.",
+    "movement": true,
+    "views": 27500,
+    "reactions": {
+      "support": 1500,
+      "like": 700,
+      "angry": 190
+    },
+    "image": "assets/images/post13.png"
+  }
+]

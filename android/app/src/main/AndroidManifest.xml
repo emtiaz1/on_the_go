@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="on_the_go"
+        android:label="on_the_go_demo"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
