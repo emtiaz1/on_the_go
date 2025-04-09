@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:video_player/video_player.dart';
 import 'user.dart'; // Import the UserPage
 
 final List<Widget> _pages = [
@@ -18,6 +19,66 @@ class UserPage extends StatefulWidget {
 
 class _UserPageState extends State<UserPage> {
   String selectedOption = 'Posts'; // Default selected option
+  String bio =
+      'I am a traveller, I love to travel in different places. I love to keep updating traffic condition to help people.'; // Editable bio
+  String jobTitle = 'Software Engineer'; // Editable job title
+  String company = 'ABC Tech Ltd.'; // Editable company name
+  String university =
+      'Daffodil International University'; // Editable university
+  String maritalStatus = 'Single'; // Editable marital status
+  VideoPlayerController? _videoController; // Video player controller
+
+  // Sample data for posts, images, and videos
+  final List<String> posts = [
+    'Avois Mirpur 10 circle, Protest is going on. huge traffic here!',
+    'Traffic update: Heavy traffic on Savar Birulia Road. Avoid if possible.',
+    'Fire on Gazipur Steelteck Factory!'
+  ];
+
+  final List<String> images = [
+    'assets/images/post1.png',
+    'assets/images/post2.png',
+    'assets/images/post3.png'
+  ];
+
+  final List<String> videos = [
+    'assets/videos/vid1.mp4',
+  ];
+
+  void _editInfo(String title, String currentValue, Function(String) onSave) {
+    TextEditingController controller =
+        TextEditingController(text: currentValue);
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Edit $title'),
+          content: TextField(
+            controller: controller,
+            decoration: InputDecoration(
+              hintText: 'Enter new $title',
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                onSave(controller.text); // Save the new value
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text('Save'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   void _showFullCoverPhoto(BuildContext context) {
     showDialog(
@@ -33,6 +94,24 @@ class _UserPageState extends State<UserPage> {
         );
       },
     );
+  }
+
+  void _playVideo(String videoPath) {
+    if (_videoController != null) {
+      _videoController!.dispose(); // Dispose the previous controller
+    }
+
+    _videoController = VideoPlayerController.asset(videoPath)
+      ..initialize().then((_) {
+        setState(() {}); // Refresh the UI after initialization
+        _videoController!.play(); // Start playing the video
+      });
+  }
+
+  @override
+  void dispose() {
+    _videoController?.dispose(); // Dispose the video controller when not needed
+    super.dispose();
   }
 
   @override
@@ -122,26 +201,94 @@ class _UserPageState extends State<UserPage> {
               ),
             ),
             const SizedBox(height: 5),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.0),
-              child: Text(
-                'I am a traveller, i love to travel in different places. I love to keep updating traffic condition to help people.',
-                style: TextStyle(fontSize: 16, color: Colors.grey),
-                textAlign: TextAlign.justify,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      bio,
+                      style: const TextStyle(fontSize: 16, color: Colors.grey),
+                      textAlign: TextAlign.justify,
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.edit, color: Colors.blue),
+                    onPressed: () {
+                      _editInfo('Bio', bio, (newValue) {
+                        setState(() {
+                          bio = newValue;
+                        });
+                      });
+                    },
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 20),
             // Job
-            const ListTile(
-              leading: Icon(Icons.work, color: Colors.blue),
-              title: Text('Software Engineer'),
-              subtitle: Text('ABC Tech Ltd.'),
+            ListTile(
+              leading: const Icon(Icons.work, color: Colors.blue),
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(jobTitle),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.edit, color: Colors.blue),
+                    onPressed: () {
+                      _editInfo('Job Title', jobTitle, (newValue) {
+                        setState(() {
+                          jobTitle = newValue;
+                        });
+                      });
+                    },
+                  ),
+                ],
+              ),
+              subtitle: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(company),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.edit, color: Colors.blue),
+                    onPressed: () {
+                      _editInfo('Company', company, (newValue) {
+                        setState(() {
+                          company = newValue;
+                        });
+                      });
+                    },
+                  ),
+                ],
+              ),
             ),
             // University
-            const ListTile(
-              leading: Icon(Icons.school, color: Colors.blue),
-              title: Text('Daffodil International University'),
-              subtitle: Text('Computer Science'),
+            ListTile(
+              leading: const Icon(Icons.school, color: Colors.blue),
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(university),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.edit, color: Colors.blue),
+                    onPressed: () {
+                      _editInfo('University', university, (newValue) {
+                        setState(() {
+                          university = newValue;
+                        });
+                      });
+                    },
+                  ),
+                ],
+              ),
+              subtitle: const Text('Computer Science'),
             ),
             // College
             const ListTile(
@@ -150,10 +297,26 @@ class _UserPageState extends State<UserPage> {
               subtitle: Text('Science'),
             ),
             // Marital Status
-            const ListTile(
-              leading: Icon(Icons.favorite, color: Colors.blue),
-              title: Text('Marital Status'),
-              subtitle: Text('Single'),
+            ListTile(
+              leading: const Icon(Icons.favorite, color: Colors.blue),
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(maritalStatus),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.edit, color: Colors.blue),
+                    onPressed: () {
+                      _editInfo('Marital Status', maritalStatus, (newValue) {
+                        setState(() {
+                          maritalStatus = newValue;
+                        });
+                      });
+                    },
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 30),
             // Contact Information
@@ -292,25 +455,90 @@ class _UserPageState extends State<UserPage> {
             const SizedBox(height: 20),
             // Content Based on Selected Option
             if (selectedOption == 'Posts')
-              Center(
-                child: Text(
-                  'Posts Section',
-                  style: TextStyle(fontSize: 18),
-                ),
+              Column(
+                children: posts
+                    .map((post) => Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16.0, vertical: 8.0),
+                          child: Card(
+                            elevation: 2,
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Text(
+                                post,
+                                style: const TextStyle(fontSize: 16),
+                              ),
+                            ),
+                          ),
+                        ))
+                    .toList(),
               )
             else if (selectedOption == 'Photos')
-              Center(
-                child: Text(
-                  'Photos Section',
-                  style: TextStyle(fontSize: 18),
+              GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 8.0,
+                  mainAxisSpacing: 8.0,
                 ),
+                padding: const EdgeInsets.all(16.0),
+                itemCount: images.length,
+                itemBuilder: (context, index) {
+                  return Card(
+                    elevation: 2,
+                    child: Image.asset(
+                      images[index],
+                      fit: BoxFit.cover,
+                    ),
+                  );
+                },
               )
             else if (selectedOption == 'Videos')
-              Center(
-                child: Text(
-                  'Videos Section',
-                  style: TextStyle(fontSize: 18),
-                ),
+              Column(
+                children: videos
+                    .map((video) => Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16.0, vertical: 8.0),
+                          child: Card(
+                            elevation: 2,
+                            child: Column(
+                              children: [
+                                if (_videoController != null &&
+                                    _videoController!.value.isInitialized &&
+                                    _videoController!.dataSource == video)
+                                  AspectRatio(
+                                    aspectRatio:
+                                        _videoController!.value.aspectRatio,
+                                    child: VideoPlayer(_videoController!),
+                                  )
+                                else
+                                  ListTile(
+                                    leading: const Icon(Icons.play_circle_fill,
+                                        color: Colors.blue, size: 40),
+                                    title: Text(
+                                      video
+                                          .split('/')
+                                          .last, // Display video name
+                                      style: const TextStyle(fontSize: 16),
+                                    ),
+                                    onTap: () {
+                                      _playVideo(
+                                          video); // Play the selected video
+                                    },
+                                  ),
+                                if (_videoController != null &&
+                                    _videoController!.value.isInitialized &&
+                                    _videoController!.dataSource == video)
+                                  VideoProgressIndicator(
+                                    _videoController!,
+                                    allowScrubbing: true,
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ))
+                    .toList(),
               ),
           ],
         ),
