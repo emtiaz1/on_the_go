@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:on_the_go_demo/homepage.dart';
 import 'package:on_the_go_demo/utils/constans/colors.dart';
 import 'package:on_the_go_demo/widgets/appbar.dart';
 import 'signup_page.dart';
@@ -34,7 +35,7 @@ class _LoginPageState extends State<LoginPage> {
       // Navigate to NewsFeedPage
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const NewsFeedPage()),
+        MaterialPageRoute(builder: (context) => const HomePage()),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
