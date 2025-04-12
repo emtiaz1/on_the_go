@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -15,13 +16,52 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController passwordController = TextEditingController();
 
   bool showError = false;
+  bool isLoading = false;
 
-  void signUp() {
-    String username = usernameController.text;
-    String password = passwordController.text;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
-    if (username.isNotEmpty && password.isNotEmpty) {
-      Navigator.pop(context, {'username': username, 'password': password});
+  void signUp() async {
+    String email = emailController.text.trim();
+    String password = passwordController.text.trim();
+
+    if (email.isNotEmpty && password.isNotEmpty) {
+      setState(() {
+        isLoading = true;
+      });
+
+      try {
+        // Create a new user with Firebase Authentication
+        await _auth.createUserWithEmailAndPassword(
+          email: email,
+          password: password,
+        );
+
+        // Navigate back with user data
+        Navigator.pop(context, {'email': email, 'password': password});
+      } on FirebaseAuthException catch (e) {
+        setState(() {
+          showError = true;
+        });
+
+        String errorMessage;
+        if (e.code == 'email-already-in-use') {
+          errorMessage = 'This email is already in use.';
+        } else if (e.code == 'weak-password') {
+          errorMessage = 'The password is too weak.';
+        } else if (e.code == 'invalid-email') {
+          errorMessage = 'The email address is invalid.';
+        } else {
+          errorMessage = 'An error occurred. Please try again.';
+        }
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(errorMessage)),
+        );
+      } finally {
+        setState(() {
+          isLoading = false;
+        });
+      }
     } else {
       setState(() {
         showError = true;
@@ -49,7 +89,7 @@ class _SignUpPageState extends State<SignUpPage> {
           child: TextField(
             controller: controller,
             decoration: InputDecoration(
-              hintText: label, // Placeholder text
+              hintText: label,
               border: InputBorder.none,
               contentPadding: const EdgeInsets.symmetric(horizontal: 10),
             ),
@@ -77,7 +117,7 @@ class _SignUpPageState extends State<SignUpPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              const SizedBox(height: 40), // Space at the top
+              const SizedBox(height: 40),
               const Text(
                 'On the Go',
                 style: TextStyle(
@@ -91,9 +131,11 @@ class _SignUpPageState extends State<SignUpPage> {
               const SizedBox(height: 20),
               buildInputField(label: 'Email', controller: emailController),
               const SizedBox(height: 20),
-              buildInputField(label: 'Phone Number', controller: phoneController),
+              buildInputField(
+                  label: 'Phone Number', controller: phoneController),
               const SizedBox(height: 20),
-              buildInputField(label: 'Username', controller: usernameController),
+              buildInputField(
+                  label: 'Username', controller: usernameController),
               const SizedBox(height: 20),
               buildInputField(
                 label: 'Password',
@@ -101,20 +143,24 @@ class _SignUpPageState extends State<SignUpPage> {
                 obscureText: true,
               ),
               const SizedBox(height: 30),
-              ElevatedButton(
-                onPressed: signUp,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                child: const Text(
-                  'Sign Up',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-              ),
+              isLoading
+                  ? const CircularProgressIndicator()
+                  : ElevatedButton(
+                      onPressed: signUp,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 50, vertical: 15),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      child: const Text(
+                        'Sign Up',
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                    ),
             ],
           ),
         ),
