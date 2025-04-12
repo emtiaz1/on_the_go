@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "372693804632",
+    "project_id": "onthego-a1b2e",
+    "storage_bucket": "onthego-a1b2e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:372693804632:android:46e27df02715d41ee2cc2d",
+        "android_client_info": {
+          "package_name": "com.example.on_the_go_demo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDz_2KB8dmbTn7BkJN8vjf7ZBOGZ4HKUYE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
