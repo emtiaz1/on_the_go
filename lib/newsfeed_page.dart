@@ -203,7 +203,7 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
                         children: [
                           IconButton(
                             icon: Icon(
-                              IonIcons.alert_circle_outline,
+                              IonIcons.alert_circle,
                               color: userReaction == 'like'
                                   ? Colors.redAccent
                                   : Colors.grey,
