@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'newsfeed_page.dart'; // Import the NewsFeedPage
+import 'package:image_picker/image_picker.dart'; // Add this import
+import 'dart:io'; // For File
 
 class NewPostPage extends StatefulWidget {
   const NewPostPage({super.key});
@@ -12,8 +14,19 @@ class _NewPostPageState extends State<NewPostPage> {
   final TextEditingController _postController = TextEditingController();
   String? _selectedLocation;
   final List<String> _locations = ['Dhaka', 'Chittagong', 'Sylhet', 'Khulna'];
-  String? _selectedImage;
+  File? _selectedImageFile; // Update to use File for the selected image
   String? _selectedVideo;
+
+  Future<void> _pickImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+
+    if (image != null) {
+      setState(() {
+        _selectedImageFile = File(image.path);
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +73,7 @@ class _NewPostPageState extends State<NewPostPage> {
                 CircleAvatar(
                   radius: 25,
                   backgroundImage: AssetImage(
-                      'assets/images/profile_picture.png'), // Replace with your profile image
+                      'assets/images/profile.png'), // Replace with your profile image
                 ),
                 const SizedBox(width: 15),
                 const Text(
@@ -89,12 +102,7 @@ class _NewPostPageState extends State<NewPostPage> {
             Row(
               children: [
                 ElevatedButton.icon(
-                  onPressed: () {
-                    setState(() {
-                      _selectedImage =
-                          'assets/images/newpost1.png'; // Example image
-                    });
-                  },
+                  onPressed: _pickImage, // Call the _pickImage method
                   icon: const Icon(Icons.image),
                   label: const Text('Photo/Video'),
                   style: ElevatedButton.styleFrom(
@@ -106,17 +114,17 @@ class _NewPostPageState extends State<NewPostPage> {
                   ),
                 ),
                 const SizedBox(width: 10),
-                if (_selectedImage != null)
+                if (_selectedImageFile != null)
                   const Icon(Icons.check_circle, color: Colors.green),
               ],
             ),
-            if (_selectedImage != null)
+            if (_selectedImageFile != null)
               Padding(
                 padding: const EdgeInsets.only(top: 10.0),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10),
-                  child: Image.asset(
-                    _selectedImage!,
+                  child: Image.file(
+                    _selectedImageFile!,
                     height: 150,
                     width: double.infinity,
                     fit: BoxFit.cover,
