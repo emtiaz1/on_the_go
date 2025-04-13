@@ -294,6 +294,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "10.0.2"
+  flutter_plugin_android_lifecycle:
+    dependency: transitive
+    description:
+      name: flutter_plugin_android_lifecycle
+      sha256: "5a1e6fb2c0561958d7e4c33574674bda7b77caaca7a33b758876956f2902eea3"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.27"
   flutter_rotation_sensor:
     dependency: transitive
     description:
@@ -400,7 +408,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.1.2"
-<<<<<<< HEAD
   image_picker:
     dependency: "direct main"
     description:
@@ -465,7 +472,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.2.1+1"
-=======
   intl:
     dependency: transitive
     description:
@@ -482,7 +488,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.9.1"
->>>>>>> 8f8a6589b35dad1fcedec548485ef96c71ec87ec
   leak_tracker:
     dependency: transitive
     description:
@@ -587,16 +592,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.15.0"
-<<<<<<< HEAD
-  mime:
-    dependency: transitive
-    description:
-      name: mime
-      sha256: "801fd0b26f14a4a58ccb09d5892c3fbdeff209594300a542492cf13fba9d247a"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.6"
-=======
   mgrs_dart:
     dependency: transitive
     description:
@@ -605,6 +600,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.0"
+  mime:
+    dependency: transitive
+    description:
+      name: mime
+      sha256: "801fd0b26f14a4a58ccb09d5892c3fbdeff209594300a542492cf13fba9d247a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.6"
   native_device_orientation:
     dependency: transitive
     description:
@@ -613,7 +616,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.3"
->>>>>>> 8f8a6589b35dad1fcedec548485ef96c71ec87ec
   path:
     dependency: transitive
     description:
