@@ -4,6 +4,11 @@ import 'maps.dart';
 import 'newpost.dart';
 import 'notification.dart';
 import 'user.dart';
+import 'faqs.dart';
+import 'about_us.dart';
+import 'saved_posts.dart';
+import 'language.dart';
+import 'settings.dart'; // Import the settings page
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -48,23 +53,74 @@ class _HomePageState extends State<HomePage> {
                 style: TextStyle(color: Colors.white, fontSize: 24),
               ),
             ),
-            ListTile(
-              leading: const Icon(Icons.home),
-              title: const Text('Home'),
+            _buildDrawerItem(
+              context,
+              icon: Icons.home,
+              text: 'Home',
               onTap: () {
                 Navigator.pop(context);
               },
             ),
-            ListTile(
-              leading: const Icon(Icons.settings),
-              title: const Text('Settings'),
+            _buildDrawerItem(
+              context,
+              icon: Icons.settings,
+              text: 'Settings',
               onTap: () {
-                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SettingsPage()),
+                );
               },
             ),
-            ListTile(
-              leading: const Icon(Icons.logout),
-              title: const Text('Logout'),
+            _buildDrawerItem(
+              context,
+              icon: Icons.question_answer,
+              text: 'FAQs',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const FaqsPage()),
+                );
+              },
+            ),
+            _buildDrawerItem(
+              context,
+              icon: Icons.info,
+              text: 'About Us',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const AboutUsPage()),
+                );
+              },
+            ),
+            _buildDrawerItem(
+              context,
+              icon: Icons.bookmark,
+              text: 'Saved Posts',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SavedPostsPage()),
+                );
+              },
+            ),
+            _buildDrawerItem(
+              context,
+              icon: Icons.language,
+              text: 'Language',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LanguagePage()),
+                );
+              },
+            ),
+            const Divider(), // Add a divider before the logout option
+            _buildDrawerItem(
+              context,
+              icon: Icons.logout,
+              text: 'Logout',
               onTap: () {
                 Navigator.pop(context);
               },
@@ -99,6 +155,40 @@ class _HomePageState extends State<HomePage> {
             label: 'User',
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildDrawerItem(BuildContext context,
+      {required IconData icon, required String text, required VoidCallback onTap}) {
+    return MouseRegion(
+      onEnter: (_) => setState(() {
+        // Trigger hover effect
+      }),
+      onExit: (_) => setState(() {
+        // Remove hover effect
+      }),
+      child: GestureDetector(
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeInOut,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            color: Colors.grey.withOpacity(0.1), // Background color on hover
+          ),
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+          child: Row(
+            children: [
+              Icon(icon, color: Colors.blue),
+              const SizedBox(width: 16),
+              Text(
+                text,
+                style: const TextStyle(fontSize: 16),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

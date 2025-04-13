@@ -1,6 +1,5 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class NewsFeedPage extends StatefulWidget {
   const NewsFeedPage({super.key});
@@ -10,7 +9,8 @@ class NewsFeedPage extends StatefulWidget {
 }
 
 class _NewsFeedPageState extends State<NewsFeedPage> {
-  List<dynamic> posts = [];
+  List<Map<String, dynamic>> posts = []; // List to store posts
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -19,11 +19,28 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
   }
 
   Future<void> _loadPosts() async {
-    final String response = await rootBundle.loadString('assets/posts.json');
-    final data = json.decode(response);
-    setState(() {
-      posts = data; // Assign the posts data
-    });
+    try {
+      // Fetch posts from Firestore
+      QuerySnapshot snapshot =
+          await FirebaseFirestore.instance.collection('posts').get();
+
+      // Map Firestore documents to a list of posts
+      final List<Map<String, dynamic>> loadedPosts = snapshot.docs.map((doc) {
+        return doc.data() as Map<String, dynamic>;
+      }).toList();
+
+      setState(() {
+        posts = loadedPosts;
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error loading posts: $e')),
+      );
+    }
   }
 
   Widget _buildNewsFeed() {
@@ -46,14 +63,14 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        post['user'],
+                        post['user'] ?? '',
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
-                        post['location'],
+                        post['location'] ?? '',
                         style: const TextStyle(
                           fontSize: 14,
                           color: Colors.grey,
@@ -64,31 +81,33 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
                   const SizedBox(height: 10),
                   // Post Content
                   Text(
-                    post['content'],
+                    post['content'] ?? '',
                     style: const TextStyle(fontSize: 16, color: Colors.black87),
                   ),
                   const SizedBox(height: 10),
                   // Post Image
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: Image.asset(
-                      post['image'],
-                      fit: BoxFit.cover,
+                  if (post['image'] != null)
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image.asset(
+                        post['image'],
+                        fit: BoxFit.cover,
+                      ),
                     ),
-                  ),
                   const SizedBox(height: 10),
                   // Tags
-                  Wrap(
-                    spacing: 8.0,
-                    children: (post['tags'] as List<dynamic>? ?? [])
-                        .map<Widget>(
-                          (tag) => Chip(
-                            label: Text(tag),
-                            backgroundColor: Colors.blue[100],
-                          ),
-                        )
-                        .toList(),
-                  ),
+                  if (post['tags'] != null)
+                    Wrap(
+                      spacing: 8.0,
+                      children: (post['tags'] as List<dynamic>)
+                          .map<Widget>(
+                            (tag) => Chip(
+                              label: Text(tag),
+                              backgroundColor: Colors.blue[100],
+                            ),
+                          )
+                          .toList(),
+                    ),
                   const SizedBox(height: 10),
                   // Reactions and Views
                   Row(
@@ -138,7 +157,7 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
                   ),
                   const SizedBox(height: 10),
                   // Movement Indicator
-                  if (post['movement'])
+                  if (post['movement'] == true)
                     const Text(
                       '🚨 Movement Alert',
                       style: TextStyle(
@@ -162,7 +181,7 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
       appBar: AppBar(
         title: const Text('Newsfeed'),
       ),
-      body: posts.isEmpty
+      body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : _buildNewsFeed(),
     );

@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:on_the_go_demo/homepage.dart';
+import 'package:on_the_go_demo/get_data_page.dart';
 import 'package:on_the_go_demo/utils/constans/colors.dart';
-import 'package:on_the_go_demo/widgets/appbar.dart';
 import 'signup_page.dart';
-import 'newsfeed_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -46,7 +44,7 @@ class _LoginPageState extends State<LoginPage> {
         
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const HomePage()),
+          MaterialPageRoute(builder: (context) =>  GetDataPage(email: email)),
         );
       }
     } on FirebaseAuthException catch (e) {

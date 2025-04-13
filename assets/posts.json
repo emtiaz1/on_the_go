@@ -1,7 +1,6 @@
 [
   {
-    "id": "p001",
-    "user": "Atique Enam",
+    "user": "AtiqueEnam",
     "location": "Dhaka",
     "content": "Unbelievable traffic today at Farmgate. Took me 2 hours to cross just 3 km!",
     "movement": false,
@@ -46,7 +45,7 @@
   },
   {
     "id": "p004",
-    "user": "Iftekharul Islam",
+    "user": "IftekharulIslam",
     "location": "Mohakhali",
     "content": "Stuck at Mohakhali for 45 mins. The bus stand is completely blocked!",
     "movement": false,
@@ -61,7 +60,7 @@
   },
   {
     "id": "p005",
-    "user": "Emtiaz Ahmed",
+    "user": "EmtiazAhmed",
     "location": "Gulistan",
     "content": "Tailback from Jatrabari to Gulistan reported. Avoid this route!",
     "movement": false,

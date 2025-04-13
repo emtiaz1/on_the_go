@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; // Add this import
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -21,20 +22,36 @@ class _SignUpPageState extends State<SignUpPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   void signUp() async {
+    String name = nameController.text.trim();
     String email = emailController.text.trim();
+    String phone = phoneController.text.trim();
+    String username = usernameController.text.trim();
     String password = passwordController.text.trim();
 
-    if (email.isNotEmpty && password.isNotEmpty) {
+    if (name.isNotEmpty &&
+        email.isNotEmpty &&
+        phone.isNotEmpty &&
+        username.isNotEmpty &&
+        password.isNotEmpty) {
       setState(() {
         isLoading = true;
       });
 
       try {
         // Create a new user with Firebase Authentication
-        await _auth.createUserWithEmailAndPassword(
+        UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
           email: email,
           password: password,
         );
+
+        // Add user information to Firestore
+        await FirebaseFirestore.instance.collection('users').doc(userCredential.user!.uid).set({
+          'name': name,
+          'email': email,
+          'phone': phone,
+          'username': username,
+          'createdAt': FieldValue.serverTimestamp(),
+        });
 
         // Navigate back with user data
         Navigator.pop(context, {'email': email, 'password': password});
