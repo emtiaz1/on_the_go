@@ -1,6 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:on_the_go_demo/get_data_page.dart';
+import 'package:on_the_go_demo/login_page.dart';
 import 'package:video_player/video_player.dart';
 
 class UserPage extends StatefulWidget {
@@ -14,16 +16,14 @@ class _UserPageState extends State<UserPage> {
   String name = '';
   String email = '';
   String phone = '';
+  String location = ''; // Added location field
+  String imageUrl = ''; // URL for the user's profile picture
+  String selectedOption = ''; // Default selected option
+  String bio = ''; // Editable bio
+  String jobTitle = ''; // Editable job title
+  String company = ''; // Editable company name
+  String university = ''; // Editable university
   bool isLoading = true;
-
-  String selectedOption = 'Posts'; // Default selected option
-  String bio =
-      'I am a traveller, I love to travel in different places. I love to keep updating traffic condition to help people.'; // Editable bio
-  String jobTitle = 'Software Engineer'; // Editable job title
-  String company = 'ABC Tech Ltd.'; // Editable company name
-  String university =
-      'Daffodil International University'; // Editable university
-  String maritalStatus = 'Single'; // Editable marital status
   VideoPlayerController? _videoController; // Video player controller
 
   final List<String> posts = [
@@ -69,6 +69,12 @@ class _UserPageState extends State<UserPage> {
           name = userData['name'] ?? '';
           email = userData['email'] ?? '';
           phone = userData['phone'] ?? '';
+          location = userData['location'] ?? ''; // Load location
+          imageUrl = userData['imageUrl'] ?? '';
+          bio = userData['bio'] ?? '';
+          jobTitle = userData['jobTitle'] ?? '';
+          company = userData['company'] ?? '';
+          university = userData['university'] ?? '';
           isLoading = false;
         });
       } else {
@@ -85,6 +91,31 @@ class _UserPageState extends State<UserPage> {
       });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error fetching user data: $e')),
+      );
+    }
+  }
+
+  Future<void> saveUserData() async {
+    if (documentId == null) return;
+
+    try {
+      await FirebaseFirestore.instance.collection('users').doc(documentId).set({
+        'name': name,
+        'email': email,
+        'phone': phone,
+        'location': location, // Save location
+        'imageUrl': imageUrl,
+        'bio': bio,
+        'jobTitle': jobTitle,
+        'company': company,
+        'university': university,
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('User data saved successfully')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error saving user data: $e')),
       );
     }
   }
@@ -114,27 +145,12 @@ class _UserPageState extends State<UserPage> {
             TextButton(
               onPressed: () {
                 onSave(controller.text); // Save the new value
+                saveUserData(); // Save updated data to Firestore
                 Navigator.of(context).pop(); // Close the dialog
               },
               child: const Text('Save'),
             ),
           ],
-        );
-      },
-    );
-  }
-
-  void _showFullCoverPhoto(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return Dialog(
-          child: InteractiveViewer(
-            child: Image.asset(
-              'assets/images/cover.png', // Full cover photo
-              fit: BoxFit.cover,
-            ),
-          ),
         );
       },
     );
@@ -150,6 +166,43 @@ class _UserPageState extends State<UserPage> {
         setState(() {}); // Refresh the UI after initialization
         _videoController!.play(); // Start playing the video
       });
+  }
+
+  void _editProfilePicture() {
+    TextEditingController controller = TextEditingController(text: imageUrl);
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Edit Profile Picture'),
+          content: TextField(
+            controller: controller,
+            decoration: const InputDecoration(
+              hintText: 'Enter image URL',
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  imageUrl = controller.text; // Update the profile picture URL
+                });
+                saveUserData(); // Save updated data to Firestore
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text('Save'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -168,38 +221,46 @@ class _UserPageState extends State<UserPage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Cover Photo with Profile Picture
-            Stack(
-              clipBehavior: Clip.none,
-              children: [
-                GestureDetector(
-                  onTap: () => _showFullCoverPhoto(context),
+            const SizedBox(height: 50), // Add spacing at the top
+            // Profile Picture
+            GestureDetector(
+              onTap: _editProfilePicture, // Open dialog to edit profile picture
+              child: Container(
+                width: 120,
+                height: 120,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: imageUrl.isNotEmpty
+                        ? NetworkImage(imageUrl)
+                        : const AssetImage('assets/images/default_profile.png')
+                            as ImageProvider,
+                    fit: BoxFit.cover,
+                  ),
+                  border: Border.all(color: Colors.blue, width: 2),
+                  borderRadius:
+                      BorderRadius.circular(8), // Slightly rounded corners
+                ),
+                child: Align(
+                  alignment: Alignment.bottomRight,
                   child: Container(
-                    height: 200,
-                    width: double.infinity,
+                    width: 25,
+                    height: 25,
                     decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage('assets/images/cover.png'),
-                        fit: BoxFit.cover,
-                      ),
+                      color: Colors.blue,
+                      borderRadius:
+                          BorderRadius.circular(4), // Match the square shape
                     ),
+                    child:
+                        const Icon(Icons.edit, color: Colors.white, size: 15),
                   ),
                 ),
-                Positioned(
-                  bottom: -50,
-                  left: MediaQuery.of(context).size.width / 2 - 60,
-                  child: CircleAvatar(
-                    radius: 60,
-                    backgroundImage: AssetImage('assets/images/profile.png'),
-                  ),
-                ),
-              ],
+              ),
             ),
-            const SizedBox(height: 70),
+            const SizedBox(height: 20),
             // User Name
             Text(
               name,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
@@ -230,20 +291,6 @@ class _UserPageState extends State<UserPage> {
             ),
             const SizedBox(height: 10),
             // Bio
-            const Align(
-              alignment: Alignment.centerLeft,
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.0),
-                child: Text(
-                  'Bio',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 5),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Row(
@@ -331,35 +378,6 @@ class _UserPageState extends State<UserPage> {
                   ),
                 ],
               ),
-              subtitle: const Text('Computer Science'),
-            ),
-            // College
-            const ListTile(
-              leading: Icon(Icons.account_balance, color: Colors.blue),
-              title: Text('Mirpur Govt High School'),
-              subtitle: Text('Science'),
-            ),
-            // Marital Status
-            ListTile(
-              leading: const Icon(Icons.favorite, color: Colors.blue),
-              title: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Text(maritalStatus),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.edit, color: Colors.blue),
-                    onPressed: () {
-                      _editInfo('Marital Status', maritalStatus, (newValue) {
-                        setState(() {
-                          maritalStatus = newValue;
-                        });
-                      });
-                    },
-                  ),
-                ],
-              ),
             ),
             const SizedBox(height: 30),
             // Contact Information
@@ -381,11 +399,21 @@ class _UserPageState extends State<UserPage> {
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Row(
                 children: [
-                  Icon(Icons.phone, color: Colors.blue),
-                  SizedBox(width: 10),
+                  const Icon(Icons.phone, color: Colors.blue),
+                  const SizedBox(width: 10),
                   Text(
-                    phone, // Error: 'phone' is not a constant
-                    style: TextStyle(fontSize: 16),
+                    phone,
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.edit, color: Colors.blue),
+                    onPressed: () {
+                      _editInfo('Phone', phone, (newValue) {
+                        setState(() {
+                          phone = newValue;
+                        });
+                      });
+                    },
                   ),
                 ],
               ),
@@ -394,12 +422,22 @@ class _UserPageState extends State<UserPage> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Row(
-                children: const [
-                  Icon(Icons.location_on, color: Colors.blue),
-                  SizedBox(width: 10),
+                children: [
+                  const Icon(Icons.location_on, color: Colors.blue),
+                  const SizedBox(width: 10),
                   Text(
-                    'Mirpur 10',
-                    style: TextStyle(fontSize: 16),
+                    location,
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.edit, color: Colors.blue),
+                    onPressed: () {
+                      _editInfo('Location', location, (newValue) {
+                        setState(() {
+                          location = newValue;
+                        });
+                      });
+                    },
                   ),
                 ],
               ),
@@ -583,6 +621,31 @@ class _UserPageState extends State<UserPage> {
                         ))
                     .toList(),
               ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: ElevatedButton(
+                onPressed: () async {
+                  await FirebaseAuth.instance.signOut(); // Sign out the user
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const LoginPage()),
+                  ); // Navigate back to the login page
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red[400],
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: const Text(
+                  'Sign Out',
+                  style: TextStyle(fontSize: 16, color: Colors.white),
+                ),
+              ),
+            ),
+            const SizedBox(height: 30),
           ],
         ),
       ),
