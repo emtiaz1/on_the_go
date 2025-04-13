@@ -17,6 +17,7 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController passwordController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   bool _isLoading = false;
+  bool _isPasswordVisible = false; // Track password visibility
 
   void login() async {
     setState(() {
@@ -41,10 +42,10 @@ class _LoginPageState extends State<LoginPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Login Successful!')),
         );
-        
+
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) =>  GetDataPage(email: email)),
+          MaterialPageRoute(builder: (context) => GetDataPage(email: email)),
         );
       }
     } on FirebaseAuthException catch (e) {
@@ -62,7 +63,7 @@ class _LoginPageState extends State<LoginPage> {
         default:
           message = 'Invalid Username or Password';
       }
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(message)),
@@ -154,13 +155,27 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 child: TextField(
                   controller: passwordController,
+                  obscureText:
+                      !_isPasswordVisible, // Toggle password visibility
                   decoration: InputDecoration(
                     hintText: 'Password',
                     hintStyle: TextStyle(color: Colors.grey[600]),
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.symmetric(horizontal: 10),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _isPasswordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                        color: Colors.grey[600],
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _isPasswordVisible = !_isPasswordVisible;
+                        });
+                      },
+                    ),
                   ),
-                  obscureText: true,
                 ),
               ),
               const SizedBox(height: 20),
