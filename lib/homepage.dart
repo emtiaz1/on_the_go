@@ -9,6 +9,7 @@ import 'about_us.dart';
 import 'saved_posts.dart';
 import 'language.dart';
 import 'settings.dart';
+import 'login_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -161,8 +162,10 @@ class _HomePageState extends State<HomePage> {
                 icon: Icons.logout,
                 text: 'Logout',
                 onTap: () {
-                  Navigator.pop(context);
-                  // Add logout logic here
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const LoginPage()),
+                  );
                 },
                 iconColor: Colors.red.shade400,
                 textColor: Colors.red.shade400,

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'NotificationSettings.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -42,6 +42,14 @@ class _SettingsPageState extends State<SettingsPage> {
       'icon': Icons.notifications,
       'title': 'Notifications',
       'subtitle': 'Message, group & call tones',
+      'onTap': (BuildContext context) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const NotificationSettingsPage(),
+          ),
+        );
+      },
     },
     {
       'icon': Icons.storage,
@@ -152,7 +160,9 @@ class _SettingsPageState extends State<SettingsPage> {
             icon: item['icon'],
             title: item['title'],
             subtitle: item['subtitle'],
-            onTap: () {},
+            onTap: item['onTap'] != null
+                ? () => item['onTap'](context)
+                : null, // Handle dynamic navigation
           );
         },
       ),
@@ -164,7 +174,7 @@ class _SettingsPageState extends State<SettingsPage> {
     required IconData icon,
     required String title,
     required String subtitle,
-    required VoidCallback onTap,
+    VoidCallback? onTap,
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
@@ -248,6 +258,22 @@ class _SettingsItemState extends State<_SettingsItem> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class NotificationSettingsPage extends StatelessWidget {
+  const NotificationSettingsPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Notification Settings'),
+      ),
+      body: const Center(
+        child: Text('Notification settings content goes here'),
       ),
     );
   }
