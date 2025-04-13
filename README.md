@@ -73,6 +73,17 @@
 - [Flutter SDK](https://flutter.dev/docs/get-started/install)
 - Firebase project setup for Authentication, Firestore, and Storage.
 - Android Studio or Xcode for building and testing the app.
+<<<<<<< HEAD
+### 🛠️ Technologies Used
+Flutter: Cross-platform mobile app development.
+Firebase: Backend services.
+          Firebase Authentication
+          Firebase Firestore
+          Firebase Storage
+          
+flutter_map: For map rendering and live location tracking.
+location: For accessing real-time location data.
+=======
 
 <<<<<<< HEAD
 ### 🛠️ Technologies Used
@@ -100,12 +111,16 @@ cd on_the_go```
 
 ````
 =======
+>>>>>>> 6866500870a6e2e7e3c23806bdfcc1d290bf602f
 ### Installation
 Clone the repository:
    ```bash
    git clone https://github.com/emtiaz1/on_the_go.git
-   cd on_the_go```
+   cd on_the_go
 
+
+<<<<<<< HEAD
+=======
 🛠️ Technologies Used
 Flutter: Cross-platform mobile app development.
 Firebase: Backend services.
@@ -115,3 +130,4 @@ Firebase Storage
 flutter_map: For map rendering and live location tracking.
 location: For accessing real-time location data.
 >>>>>>> 772bcbda389339251c6116468bcdc45db59b4d1d
+>>>>>>> 6866500870a6e2e7e3c23806bdfcc1d290bf602f

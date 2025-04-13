@@ -66,60 +66,32 @@ class _NotificationPageState extends State<NotificationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: null,
-      body: Column(
-        children: [
-          _buildBottomHeader(),
-          Expanded(
-            child: ListView.builder(
-              itemCount: notifications.length,
-              itemBuilder: (context, index) {
-                final notification = notifications[index];
-                return _buildNotificationCard(notification, index);
-              },
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 2,
+        title: Container(
+          height: 40,
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          decoration: BoxDecoration(
+            color: Colors.grey[200],
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: const TextField(
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              hintText: "Search notifications...",
+              icon: Icon(Icons.search, color: Colors.black),
             ),
           ),
-        ],
+        ),
+        centerTitle: true,
       ),
-    );
-  }
-
-  Widget _buildBottomHeader() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-      color: Colors.white,
-      child: Row(
-        children: [
-          const Text(
-            "Notifications",
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Container(
-              height: 36,
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.circular(18),
-              ),
-              child: const TextField(
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  hintText: "Search",
-                  icon: Icon(Icons.search),
-                ),
-              ),
-            ),
-          ),
-          IconButton(
-            icon: const Icon(Icons.more_vert),
-            onPressed: () {},
-          ),
-        ],
+      body: ListView.builder(
+        itemCount: notifications.length,
+        itemBuilder: (context, index) {
+          final notification = notifications[index];
+          return _buildNotificationCard(notification, index);
+        },
       ),
     );
   }
@@ -128,7 +100,7 @@ class _NotificationPageState extends State<NotificationPage> {
     final bool isSeen = notification['seen'];
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      color: isSeen ? Colors.grey[300] : Colors.white, // Adjusted color here
+      color: isSeen ? Colors.grey[200] : Colors.grey[300], // Light if seen, dark if unseen
       child: ListTile(
         leading: CircleAvatar(
           backgroundColor: Colors.grey[400],
@@ -143,7 +115,7 @@ class _NotificationPageState extends State<NotificationPage> {
         ),
         onTap: () {
           setState(() {
-            notifications[index]['seen'] = true;  // Mark as seen when tapped
+            notifications[index]['seen'] = true;
           });
         },
       ),
@@ -153,58 +125,63 @@ class _NotificationPageState extends State<NotificationPage> {
   void _showBottomMenu(int index) {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading: const Icon(Icons.expand_more),
-                title: const Text("Show more"),
-                onTap: () {
-                  Navigator.pop(context);
-                  _showSnack("Showing more...");
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.expand_less),
-                title: const Text("Show less"),
-                onTap: () {
-                  Navigator.pop(context);
-                  _showSnack("Showing less...");
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.delete),
-                title: const Text("Delete notification"),
-                onTap: () {
-                  setState(() {
-                    notifications.removeAt(index);
-                  });
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.notifications_off),
-                title: const Text("Turn off notifications"),
-                onTap: () {
-                  Navigator.pop(context);
-                  _showSnack("Notifications turned off");
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.report),
-                title: const Text("Report issue to notification team"),
-                onTap: () {
-                  Navigator.pop(context);
-                  _showSnack("Issue reported");
-                },
-              ),
-            ],
+        return SingleChildScrollView(
+          child: Padding(
+            padding:
+                EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(height: 10),
+                ListTile(
+                  leading: const Icon(Icons.expand_more),
+                  title: const Text("Show more"),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _showSnack("Showing more...");
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.expand_less),
+                  title: const Text("Show less"),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _showSnack("Showing less...");
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.delete),
+                  title: const Text("Delete notification"),
+                  onTap: () {
+                    setState(() {
+                      notifications.removeAt(index);
+                    });
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.notifications_off),
+                  title: const Text("Turn off notifications"),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _showSnack("Notifications turned off");
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.report),
+                  title: const Text("Report issue to notification team"),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _showSnack("Issue reported");
+                  },
+                ),
+              ],
+            ),
           ),
         );
       },
