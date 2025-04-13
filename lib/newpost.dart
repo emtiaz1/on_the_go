@@ -15,7 +15,7 @@ class _NewPostPageState extends State<NewPostPage> {
   String? _selectedLocation;
   final List<String> _locations = ['Dhaka', 'Chittagong', 'Sylhet', 'Khulna'];
   File? _selectedImageFile; // Update to use File for the selected image
-  String? _selectedVideo;
+  File? _selectedVideoFile; // Update to use File for the selected video
 
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
@@ -24,6 +24,17 @@ class _NewPostPageState extends State<NewPostPage> {
     if (image != null) {
       setState(() {
         _selectedImageFile = File(image.path);
+      });
+    }
+  }
+
+  Future<void> _recordVideo() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? video = await picker.pickVideo(source: ImageSource.camera);
+
+    if (video != null) {
+      setState(() {
+        _selectedVideoFile = File(video.path);
       });
     }
   }
@@ -137,12 +148,7 @@ class _NewPostPageState extends State<NewPostPage> {
             Row(
               children: [
                 ElevatedButton.icon(
-                  onPressed: () {
-                    setState(() {
-                      _selectedVideo =
-                          'assets/videos/vid1.mp4'; // Example video
-                    });
-                  },
+                  onPressed: _recordVideo, // Call the _recordVideo method
                   icon: const Icon(Icons.videocam),
                   label: const Text('Live Video'),
                   style: ElevatedButton.styleFrom(
@@ -154,11 +160,11 @@ class _NewPostPageState extends State<NewPostPage> {
                   ),
                 ),
                 const SizedBox(width: 10),
-                if (_selectedVideo != null)
+                if (_selectedVideoFile != null)
                   const Icon(Icons.check_circle, color: Colors.green),
               ],
             ),
-            if (_selectedVideo != null)
+            if (_selectedVideoFile != null)
               Padding(
                 padding: const EdgeInsets.only(top: 10.0),
                 child: Container(
