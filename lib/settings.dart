@@ -273,7 +273,7 @@ class NotificationSettingsPage extends StatelessWidget {
         title: const Text('Notification Settings'),
       ),
       body: const Center(
-        child: Text('Notification settings content goes here'),
+        child: Text('Notification settings content goes Here'),
       ),
     );
   }
