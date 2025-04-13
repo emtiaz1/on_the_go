@@ -594,8 +594,12 @@ packages:
 <<<<<<< HEAD
     version: "1.15.0"
 =======
+<<<<<<< HEAD
+    version: "1.15.0"
+=======
     version: "1.16.0"
 >>>>>>> 4829150e475746e62a095c65dd78e061ee8a7406
+>>>>>>> d3309d41db13fc9098715c92c7ff9ea8cdb2f2e0
   mgrs_dart:
     dependency: transitive
     description:
