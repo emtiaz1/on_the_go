@@ -47,6 +47,7 @@ Firebase: Backend services.
           Firebase Authentication
           Firebase Firestore
           Firebase Storage
+          
 flutter_map: For map rendering and live location tracking.
 location: For accessing real-time location data.
 ### Installation
