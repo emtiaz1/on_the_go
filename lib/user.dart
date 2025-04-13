@@ -1,14 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:on_the_go_demo/get_data_page.dart';
 import 'package:video_player/video_player.dart';
-import 'user.dart'; // Import the UserPage
-
-final List<Widget> _pages = [
-  Center(child: Text('Newsfeed Page', style: TextStyle(fontSize: 20))),
-  Center(child: Text('Search Page', style: TextStyle(fontSize: 20))),
-  Center(child: Text('Maps Page', style: TextStyle(fontSize: 20))),
-  Center(child: Text('Create New Post', style: TextStyle(fontSize: 20))),
-  const UserPage(), // Add the UserPage here
-];
 
 class UserPage extends StatefulWidget {
   const UserPage({super.key});
@@ -18,6 +11,11 @@ class UserPage extends StatefulWidget {
 }
 
 class _UserPageState extends State<UserPage> {
+  String name = '';
+  String email = '';
+  String phone = '';
+  bool isLoading = true;
+
   String selectedOption = 'Posts'; // Default selected option
   String bio =
       'I am a traveller, I love to travel in different places. I love to keep updating traffic condition to help people.'; // Editable bio
@@ -28,7 +26,6 @@ class _UserPageState extends State<UserPage> {
   String maritalStatus = 'Single'; // Editable marital status
   VideoPlayerController? _videoController; // Video player controller
 
-  // Sample data for posts, images, and videos
   final List<String> posts = [
     'Avois Mirpur 10 circle, Protest is going on. huge traffic here!',
     'Traffic update: Heavy traffic on Savar Birulia Road. Avoid if possible.',
@@ -44,6 +41,53 @@ class _UserPageState extends State<UserPage> {
   final List<String> videos = [
     'assets/videos/vid1.mp4',
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUserData();
+  }
+
+  Future<void> fetchUserData() async {
+    if (documentId == null) {
+      setState(() {
+        isLoading = false;
+      });
+      return;
+    }
+
+    try {
+      // Fetch user data from Firestore using the global document ID
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(documentId)
+          .get();
+
+      if (userDoc.exists) {
+        var userData = userDoc.data() as Map<String, dynamic>;
+        setState(() {
+          name = userData['name'] ?? '';
+          email = userData['email'] ?? '';
+          phone = userData['phone'] ?? '';
+          isLoading = false;
+        });
+      } else {
+        setState(() {
+          isLoading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('User data not found')),
+        );
+      }
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error fetching user data: $e')),
+      );
+    }
+  }
 
   void _editInfo(String title, String currentValue, Function(String) onSave) {
     TextEditingController controller =
@@ -116,6 +160,10 @@ class _UserPageState extends State<UserPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -125,37 +173,32 @@ class _UserPageState extends State<UserPage> {
               clipBehavior: Clip.none,
               children: [
                 GestureDetector(
-                  onTap: () => _showFullCoverPhoto(
-                      context), // Show full cover photo on tap
+                  onTap: () => _showFullCoverPhoto(context),
                   child: Container(
                     height: 200,
                     width: double.infinity,
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                        image: AssetImage(
-                            'assets/images/cover.png'), // Cover photo
+                        image: AssetImage('assets/images/cover.png'),
                         fit: BoxFit.cover,
                       ),
                     ),
                   ),
                 ),
                 Positioned(
-                  bottom:
-                      -50, // Position the profile picture overlapping the cover photo
-                  left: MediaQuery.of(context).size.width / 2 -
-                      60, // Center the profile picture
+                  bottom: -50,
+                  left: MediaQuery.of(context).size.width / 2 - 60,
                   child: CircleAvatar(
                     radius: 60,
-                    backgroundImage: AssetImage(
-                        'assets/images/profile.png'), // Profile photo
+                    backgroundImage: AssetImage('assets/images/profile.png'),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 70), // Space below the profile picture
+            const SizedBox(height: 70),
             // User Name
-            const Text(
-              'Kuddus',
+            Text(
+              name,
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -163,9 +206,9 @@ class _UserPageState extends State<UserPage> {
             ),
             const SizedBox(height: 10),
             // User Email
-            const Text(
-              'kuddus@example.com',
-              style: TextStyle(
+            Text(
+              email,
+              style: const TextStyle(
                 fontSize: 16,
                 color: Colors.grey,
               ),
@@ -337,11 +380,11 @@ class _UserPageState extends State<UserPage> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Row(
-                children: const [
+                children: [
                   Icon(Icons.phone, color: Colors.blue),
                   SizedBox(width: 10),
                   Text(
-                    '+88017444444',
+                    phone, // Error: 'phone' is not a constant
                     style: TextStyle(fontSize: 16),
                   ),
                 ],
