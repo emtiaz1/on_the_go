@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:icons_plus/icons_plus.dart';
+import 'package:icons_plus/icons_plus.dart';
 
 class NewsFeedPage extends StatefulWidget {
   const NewsFeedPage({super.key});
@@ -9,7 +12,7 @@ class NewsFeedPage extends StatefulWidget {
 }
 
 class _NewsFeedPageState extends State<NewsFeedPage> {
-  List<Map<String, dynamic>> posts = []; // List to store posts
+  List<Map<String, dynamic>> posts = [];
   bool isLoading = true;
 
   @override
@@ -20,27 +23,21 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
 
   Future<void> _loadPosts() async {
     try {
-      final userId = "currentUserId"; // Replace with the actual user ID
+      final userId = "currentUserId";
 
-      // Fetch posts from Firestore
       QuerySnapshot snapshot =
           await FirebaseFirestore.instance.collection('posts').get();
 
-      // Map Firestore documents to a list of posts
       final List<Map<String, dynamic>> loadedPosts = [];
       for (var doc in snapshot.docs) {
         final data = doc.data() as Map<String, dynamic>;
-        data['id'] = doc.id; // Add document ID for updating reactions
+        data['id'] = doc.id;
 
-        // Ensure reactions field exists
-        data['reactions'] = data['reactions'] ??
-            {
-              'like': 0,
-              'angry': 0,
-              'sad': 0,
-            };
-
-        // Provide default values for other fields
+        data['reactions'] = data['reactions'] ?? {
+          'like': 0,
+          'angry': 0,
+          'sad': 0,
+        };
         data['content'] = data['content'] ?? 'No content available';
         data['image'] = data['image'] ?? '';
         data['location'] = data['location'] ?? 'Unknown Location';
@@ -72,17 +69,13 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
       if (postIndex == -1) return;
 
       final currentReactions = posts[postIndex]['reactions'] ?? {};
-      final currentReactionType =
-          posts[postIndex]['userReaction']; // Track current user reaction
+      final currentReactionType = posts[postIndex]['userReaction'];
 
-      // Ensure newReactionType is not null
       if (newReactionType.isEmpty) {
         throw Exception('Reaction type cannot be null or empty');
       }
 
-      // Decrement the previous reaction count if the user had already reacted
-      if (currentReactionType != null &&
-          currentReactionType != newReactionType) {
+      if (currentReactionType != null && currentReactionType != newReactionType) {
         final previousCount = currentReactions[currentReactionType] ?? 0;
         await FirebaseFirestore.instance
             .collection('posts')
@@ -93,24 +86,19 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
         });
       }
 
-      // Increment the new reaction count
       final newCount = currentReactions[newReactionType] ?? 0;
       await FirebaseFirestore.instance.collection('posts').doc(postId).update({
         'reactions.$newReactionType': newCount + 1,
       });
 
-      // Update local state
       setState(() {
         if (currentReactionType != null &&
             currentReactionType != newReactionType) {
           posts[postIndex]['reactions'][currentReactionType] =
-              (currentReactions[currentReactionType] ?? 1) -
-                  1; // Decrement previous reaction
+              (currentReactions[currentReactionType] ?? 1) - 1;
         }
-        posts[postIndex]['reactions'][newReactionType] =
-            newCount + 1; // Increment new reaction
-        posts[postIndex]['userReaction'] =
-            newReactionType; // Update user reaction
+        posts[postIndex]['reactions'][newReactionType] = newCount + 1;
+        posts[postIndex]['userReaction'] = newReactionType;
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -121,141 +109,159 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
 
   Widget _buildNewsFeed() {
     return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
       child: Column(
         children: posts.map((post) {
           final reactions = post['reactions'] ?? {};
-          final userReaction = post['userReaction']; // Track user reaction
+          final userReaction = post['userReaction'];
 
-          return Card(
-            margin: const EdgeInsets.only(bottom: 20.0),
-            elevation: 5,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
+          return Container(
+            margin: const EdgeInsets.only(bottom: 20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.blueAccent.withOpacity(0.08),
+                  blurRadius: 12,
+                  offset: const Offset(0, 6),
+                ),
+              ],
             ),
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Post Author and Location
+                  /// Author & Location
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        post['user'] ?? 'Unknown User', // Default value
-                        style: const TextStyle(
+                        post['user'],
+                        style: GoogleFonts.poppins(
                           fontSize: 16,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.blueGrey[900],
                         ),
                       ),
                       Text(
-                        post['location'] ?? 'Unknown Location', // Default value
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey,
+                        post['location'],
+                        style: GoogleFonts.poppins(
+                          fontSize: 12,
+                          color: Colors.grey[600],
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 10),
-                  // Post Content
+
+                  /// Content
                   Text(
-                    post['content'] ?? 'No content available', // Default value
-                    style: const TextStyle(fontSize: 16, color: Colors.black87),
+                    post['content'],
+                    style: GoogleFonts.poppins(
+                      fontSize: 14,
+                      color: Colors.black87,
+                    ),
                   ),
                   const SizedBox(height: 10),
-                  // Post Image
-                  if (post['image'] != null)
+
+                  /// Image
+                  if (post['image'].isNotEmpty)
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(12),
                       child: Image.asset(
-                        post['image'] ?? '', // Default value
+                        post['image'],
                         fit: BoxFit.cover,
                       ),
                     ),
                   const SizedBox(height: 10),
-                  // Tags
-                  if (post['tags'] != null)
+
+                  /// Tags
+                  if (post['tags'] != null && post['tags'].isNotEmpty)
                     Wrap(
-                      spacing: 8.0,
-                      children: (post['tags'] as List<dynamic>)
-                          .map<Widget>(
-                            (tag) => Chip(
-                              label: Text(tag ?? ''), // Default value
-                              backgroundColor: Colors.blue[100],
-                            ),
-                          )
+                      spacing: 6.0,
+                      children: (post['tags'] as List)
+                          .map((tag) => Chip(
+                                label: Text(tag),
+                                backgroundColor: Colors.blue.shade50,
+                                labelStyle: const TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.blue,
+                                ),
+                              ))
                           .toList(),
                     ),
                   const SizedBox(height: 10),
-                  // Reactions and Views
+
+                  /// Reactions & Views
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      // Reactions
+                      /// Reactions
                       Row(
                         children: [
                           IconButton(
                             icon: Icon(
-                              Icons.thumb_up,
+                              IonIcons.alert_circle_outline,
                               color: userReaction == 'like'
+                                  ? Colors.redAccent
+                                  : Colors.grey,
+                            ),
+                            onPressed: () => _updateReaction(post['id'], 'like'),
+                          ),
+                          Text('${reactions['like'] ?? 0}'),
+                          const SizedBox(width: 8),
+                          IconButton(
+                            icon: Icon(
+                              Icons.sentiment_satisfied_rounded,
+                              color: userReaction == 'angry'
                                   ? Colors.blue
                                   : Colors.grey,
                             ),
-                            onPressed: () {
-                              _updateReaction(post['id'], 'like');
-                            },
+                            onPressed: () => _updateReaction(post['id'], 'angry'),
                           ),
-                          Text('${reactions['like'] ?? 0}'), // Default value
-                          const SizedBox(width: 10),
+                          Text('${reactions['angry'] ?? 0}'),
+                          const SizedBox(width: 8),
                           IconButton(
                             icon: Icon(
-                              Icons.sentiment_very_dissatisfied,
-                              color: userReaction == 'angry'
-                                  ? Colors.red
-                                  : Colors.grey,
-                            ),
-                            onPressed: () {
-                              _updateReaction(post['id'], 'angry');
-                            },
-                          ),
-                          Text('${reactions['angry'] ?? 0}'), // Default value
-                          const SizedBox(width: 10),
-                          IconButton(
-                            icon: Icon(
-                              Icons.sentiment_dissatisfied,
+                              Icons.sentiment_dissatisfied_rounded,
                               color: userReaction == 'sad'
-                                  ? Colors.orange
+                                  ? Colors.orangeAccent
                                   : Colors.grey,
                             ),
-                            onPressed: () {
-                              _updateReaction(post['id'], 'sad');
-                            },
+                            onPressed: () => _updateReaction(post['id'], 'sad'),
                           ),
-                          Text('${reactions['sad'] ?? 0}'), // Default value
+                          Text('${reactions['sad'] ?? 0}'),
                         ],
                       ),
-                      // Views
+
+                      /// Views
                       Row(
                         children: [
-                          const Icon(Icons.visibility, color: Colors.grey),
-                          const SizedBox(width: 3),
-                          Text('${post['views'] ?? 0} Views'), // Default value
+                          const Icon(Icons.remove_red_eye_outlined, size: 18, color: Colors.grey),
+                          const SizedBox(width: 4),
+                          Text(
+                            '${post['views']} views',
+                            style: GoogleFonts.poppins(fontSize: 12),
+                          ),
                         ],
                       ),
                     ],
                   ),
-                  const SizedBox(height: 10),
-                  // Movement Indicator
-                  if (post['movement'] == true)
-                    const Text(
+
+                  /// Movement alert
+                  if (post['movement'] == true) ...[
+                    const SizedBox(height: 6),
+                    Text(
                       '🚨 Movement Alert',
-                      style: TextStyle(
+                      style: GoogleFonts.poppins(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
-                        color: Colors.red,
+                        color: Colors.redAccent,
                       ),
                     ),
+                  ]
                 ],
               ),
             ),
@@ -268,8 +274,14 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF3F7FA),
       appBar: AppBar(
-        title: const Text('Newsfeed'),
+        title: Text(
+          'NewsFeed',
+          style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
+        ),
+        backgroundColor: Colors.blueAccent,
+        elevation: 0,
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
