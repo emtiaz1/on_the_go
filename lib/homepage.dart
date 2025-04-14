@@ -53,7 +53,7 @@ class _HomePageState extends State<HomePage> {
                 color: Colors.white,
               ),
             ),
-            SizedBox(width: 6),
+            const SizedBox(width: 6),
             Text(
               'Go',
               style: TextStyle(
@@ -66,7 +66,7 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
         elevation: 2,
-        backgroundColor: Color(0xFF104C91),
+        backgroundColor: const Color(0xFF104C91),
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(
@@ -220,34 +220,98 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       body: _pages[_currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: _onTabTapped,
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.blue.shade700,
-        unselectedItemColor: Colors.grey,
-        showUnselectedLabels: true,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.feed),
-            label: 'Newsfeed',
+      bottomNavigationBar: BottomAppBar(
+        shape: const CircularNotchedRectangle(),
+        notchMargin: 8.0,
+        child: Container(
+          height: 70,
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 10,
+                offset: Offset(0, -2),
+              ),
+            ],
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.map),
-            label: 'Maps',
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _buildBottomNavItem(
+                icon: Icons.feed,
+                index: 0,
+                label: 'Newsfeed',
+                size: 25,
+              ),
+              _buildBottomNavItem(
+                icon: Icons.map,
+                index: 1,
+                label: 'Maps',
+                size: 25,
+              ),
+              _buildBottomNavItem(
+                icon: Icons.add_circle,
+                index: 2,
+                label: 'New Post',
+                size: 45,
+              ),
+              _buildBottomNavItem(
+                icon: Icons.notifications,
+                index: 3,
+                label: 'Notifications',
+                size: 25,
+              ),
+              _buildBottomNavItem(
+                icon: Icons.person,
+                index: 4,
+                label: 'User',
+                size: 25,
+              ),
+            ],
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.add_circle, size: 40),
-            label: 'New Post',
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBottomNavItem({
+    required IconData icon,
+    required int index,
+    required String label,
+    double size = 28, // Default size for icons
+  }) {
+    final isSelected = _currentIndex == index;
+
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _currentIndex = index;
+        });
+      },
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            icon,
+            color: isSelected ? const Color(0xFFA52E45) : Colors.black87,
+            size: size, // Use the size parameter
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.notifications),
-            label: 'Notifications',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'User',
-          ),
+          const SizedBox(height: 4),
+          if (isSelected)
+            Container(
+              width: 6,
+              height: 6,
+              decoration: const BoxDecoration(
+                color: Color(0xFFA52E45),
+                shape: BoxShape.circle,
+              ),
+            ),
         ],
       ),
     );

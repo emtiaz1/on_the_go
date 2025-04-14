@@ -16,10 +16,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'On The Go',
-      theme: ThemeData(
-        primaryColor: const Color(0xFFA52E45),
-        scaffoldBackgroundColor: Color(0xFF14142A),
-      ),
       home: const LoginPage(),
     );
   }
