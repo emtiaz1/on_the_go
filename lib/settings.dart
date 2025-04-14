@@ -16,21 +16,25 @@ class _SettingsPageState extends State<SettingsPage> {
       'icon': Icons.vpn_key,
       'title': 'Account',
       'subtitle': 'Security notifications, change number',
+      'color': Colors.red,
     },
     {
       'icon': Icons.lock,
       'title': 'Privacy',
       'subtitle': 'Block contacts, disappearing messages',
+      'color': Colors.green,
     },
     {
       'icon': Icons.chat,
       'title': 'Chats',
       'subtitle': 'Theme, wallpapers, chat history',
+      'color': Colors.blue,
     },
     {
       'icon': Icons.notifications,
       'title': 'Notifications',
       'subtitle': 'Message, group & call tones',
+      'color': Colors.orange,
       'onTap': (BuildContext context) {
         Navigator.push(
           context,
@@ -44,17 +48,19 @@ class _SettingsPageState extends State<SettingsPage> {
       'icon': Icons.help,
       'title': 'Help',
       'subtitle': 'Help center, contact us, privacy policy',
+      'color': Colors.purple,
     },
-    // New icons added below
     {
       'icon': Icons.language,
       'title': 'Language',
       'subtitle': 'Change app language',
+      'color': Colors.teal,
     },
     {
       'icon': Icons.storage,
       'title': 'Storage',
       'subtitle': 'Manage storage and data usage',
+      'color': Colors.brown,
     },
   ];
 
@@ -64,7 +70,6 @@ class _SettingsPageState extends State<SettingsPage> {
   void initState() {
     super.initState();
     _filteredSettingsItems = List.from(_allSettingsItems);
-
     _searchController.addListener(() {
       _filterSettingsItems(_searchController.text);
     });
@@ -119,7 +124,10 @@ class _SettingsPageState extends State<SettingsPage> {
               itemBuilder: (context, index) {
                 final item = _filteredSettingsItems[index];
                 return ListTile(
-                  leading: Icon(item['icon'], color: Colors.blue),
+                  leading: CircleAvatar(
+                    backgroundColor: item['color'],
+                    child: Icon(item['icon'], color: Colors.white),
+                  ),
                   title: Text(item['title']),
                   subtitle: Text(item['subtitle']),
                   onTap: () {
