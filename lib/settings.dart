@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'NotificationSettings.dart';
+import 'data_and_storage.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -22,7 +23,7 @@ class _SettingsPageState extends State<SettingsPage> {
     {
       'icon': Icons.lock,
       'title': 'Privacy',
-      'subtitle': 'Block contacts, disappearing messages',
+      'subtitle': 'Audience, Visibility, read receipts',
       'color': Colors.green,
     },
     {
@@ -62,6 +63,14 @@ class _SettingsPageState extends State<SettingsPage> {
       'title': 'Storage and data',
       'subtitle': 'Network usage, auto-download',
       'color': Colors.brown,
+      'onTap': (BuildContext context) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const StoragePage(),
+          ),
+        );
+      },
     },
     {
       'icon': Icons.language,
