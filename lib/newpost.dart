@@ -122,6 +122,8 @@ class _NewPostPageState extends State<NewPostPage> {
                 prefixIcon:
                     const Icon(Icons.edit, color: Colors.blue), // Edit icon
                 hintText: 'Write something...',
+                fillColor: Colors.white, // White background
+                filled: true, // Enable background color
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10.0),
                 ),
@@ -137,6 +139,8 @@ class _NewPostPageState extends State<NewPostPage> {
                 prefixIcon:
                     const Icon(Icons.image, color: Colors.green), // Image icon
                 hintText: 'Enter image link...',
+                fillColor: Colors.white, // White background
+                filled: true, // Enable background color
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10.0),
                 ),
@@ -163,7 +167,8 @@ class _NewPostPageState extends State<NewPostPage> {
               decoration: InputDecoration(
                 prefixIcon: const Icon(Icons.location_on,
                     color: Colors.orange), // Location icon
-                labelText: 'Select Location',
+                fillColor: Colors.white, // White background
+                filled: true, // Enable background color
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10.0),
                 ),
@@ -182,6 +187,7 @@ class _NewPostPageState extends State<NewPostPage> {
                 const SizedBox(height: 10),
                 Wrap(
                   spacing: 6.0,
+                  runSpacing: 6.0, // Add spacing between lines
                   children: _tags
                       .map((tag) => Chip(
                             label: Text(tag),
@@ -207,6 +213,8 @@ class _NewPostPageState extends State<NewPostPage> {
                     prefixIcon:
                         const Icon(Icons.tag, color: Colors.purple), // Tag icon
                     hintText: 'Enter a tag and press Add...',
+                    fillColor: Colors.white, // White background
+                    filled: true, // Enable background color
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),
                     ),
@@ -241,8 +249,10 @@ class _NewPostPageState extends State<NewPostPage> {
                     SizedBox(width: 8),
                     Text(
                       'Movement:',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white70),
                     ),
                   ],
                 ),
