@@ -10,7 +10,6 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   final TextEditingController _searchController = TextEditingController();
-  bool _isSearching = false;
 
   final List<Map<String, dynamic>> _allSettingsItems = [
     {
@@ -22,16 +21,6 @@ class _SettingsPageState extends State<SettingsPage> {
       'icon': Icons.lock,
       'title': 'Privacy',
       'subtitle': 'Block contacts, disappearing messages',
-    },
-    {
-      'icon': Icons.account_circle,
-      'title': 'Avatar',
-      'subtitle': 'Create, edit, profile photo',
-    },
-    {
-      'icon': Icons.list_alt,
-      'title': 'Lists',
-      'subtitle': 'Manage people and groups',
     },
     {
       'icon': Icons.chat,
@@ -52,28 +41,18 @@ class _SettingsPageState extends State<SettingsPage> {
       },
     },
     {
-      'icon': Icons.storage,
-      'title': 'Storage and data',
-      'subtitle': 'Network usage, auto-download',
-    },
-    {
-      'icon': Icons.language,
-      'title': 'App language',
-      'subtitle': "English (device's language)",
-    },
-    {
       'icon': Icons.help,
       'title': 'Help',
       'subtitle': 'Help center, contact us, privacy policy',
     },
   ];
 
-  List<Map<String, dynamic>> _filteredSettingsItems = [];
+  late List<Map<String, dynamic>> _filteredSettingsItems;
 
   @override
   void initState() {
     super.initState();
-    _filteredSettingsItems = _allSettingsItems;
+    _filteredSettingsItems = List.from(_allSettingsItems);
 
     _searchController.addListener(() {
       _filterSettingsItems(_searchController.text);
@@ -83,7 +62,7 @@ class _SettingsPageState extends State<SettingsPage> {
   void _filterSettingsItems(String query) {
     setState(() {
       if (query.isEmpty) {
-        _filteredSettingsItems = _allSettingsItems;
+        _filteredSettingsItems = List.from(_allSettingsItems);
       } else {
         _filteredSettingsItems = _allSettingsItems.where((item) {
           final title = item['title'].toString().toLowerCase();
@@ -96,184 +75,56 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: _isSearching
-            ? TextField(
-                controller: _searchController,
-                autofocus: true,
-                style: const TextStyle(color: Colors.white),
-                decoration: InputDecoration(
-                  hintText: 'Search',
-                  hintStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
-                  border: InputBorder.none,
-                ),
-                cursorColor: Colors.white,
-              )
-            : const Text(
-                'Settings',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
+        title: const Text('Settings'),
+        backgroundColor: Colors.blue,
+      ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                hintText: 'Search settings...',
+                prefixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.0),
                 ),
               ),
-        backgroundColor: Colors.lightBlue.shade700,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {
-            if (_isSearching) {
-              setState(() {
-                _isSearching = false;
-                _searchController.clear();
-              });
-            } else {
-              Navigator.pop(context);
-            }
-          },
-        ),
-        actions: [
-          IconButton(
-            icon: Icon(
-              _isSearching ? Icons.close : Icons.search,
-              color: Colors.white,
             ),
-            onPressed: () {
-              setState(() {
-                _isSearching = !_isSearching;
-                if (!_isSearching) _searchController.clear();
-              });
-            },
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: _filteredSettingsItems.length,
+              itemBuilder: (context, index) {
+                final item = _filteredSettingsItems[index];
+                return ListTile(
+                  leading: Icon(item['icon'], color: Colors.blue),
+                  title: Text(item['title']),
+                  subtitle: Text(item['subtitle']),
+                  onTap: () {
+                    if (item['onTap'] != null) {
+                      item['onTap'](context);
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('${item['title']} tapped')),
+                      );
+                    }
+                  },
+                );
+              },
+            ),
           ),
         ],
-        elevation: 0,
-      ),
-      backgroundColor: Colors.lightBlue.shade50,
-      body: ListView.builder(
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        itemCount: _filteredSettingsItems.length,
-        itemBuilder: (context, index) {
-          final item = _filteredSettingsItems[index];
-          return _buildSettingsItem(
-            context,
-            icon: item['icon'],
-            title: item['title'],
-            subtitle: item['subtitle'],
-            onTap: item['onTap'] != null
-                ? () => item['onTap'](context)
-                : null, // Handle dynamic navigation
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildSettingsItem(
-    BuildContext context, {
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    VoidCallback? onTap,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      child: MouseRegion(
-        cursor: SystemMouseCursors.click,
-        child: GestureDetector(
-          onTap: onTap,
-          child: _SettingsItem(
-            icon: icon,
-            title: title,
-            subtitle: subtitle,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _SettingsItem extends StatefulWidget {
-  final IconData icon;
-  final String title;
-  final String subtitle;
-
-  const _SettingsItem({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-  });
-
-  @override
-  _SettingsItemState createState() => _SettingsItemState();
-}
-
-class _SettingsItemState extends State<_SettingsItem> {
-  bool _isHovered = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.easeInOut,
-        transform: Matrix4.identity()..scale(_isHovered ? 1.01 : 1.0),
-        decoration: BoxDecoration(
-          color: _isHovered ? Colors.lightBlue.shade100 : Colors.transparent,
-          borderRadius: BorderRadius.circular(10),
-        ),
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-        child: Row(
-          children: [
-            Icon(
-              widget.icon,
-              color: Colors.lightBlue.shade700,
-              size: 28,
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.title,
-                    style: const TextStyle(
-                      color: Colors.black87,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    widget.subtitle,
-                    style: TextStyle(
-                      color: Colors.grey.shade700,
-                      fontSize: 14,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class NotificationSettingsPage extends StatelessWidget {
-  const NotificationSettingsPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Notification Settings'),
-      ),
-      body: const Center(
-        child: Text('Notification settings content goes Here'),
       ),
     );
   }
