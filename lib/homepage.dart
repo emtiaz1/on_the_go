@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:iconsax/iconsax.dart';
+import 'package:on_the_go_demo/utils/constans/colors.dart';
 import 'newsfeed_page.dart';
 import 'maps.dart';
 import 'newpost.dart';
@@ -39,9 +42,45 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('On The Go'),
+        title: Row(
+          children: [
+            Text(
+              'On the',
+              style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+                fontFamily: GoogleFonts.lobster().fontFamily,
+                color: Colors.white,
+              ),
+            ),
+            SizedBox(width: 6),
+            Text(
+              'Go',
+              style: TextStyle(
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
+                fontFamily: GoogleFonts.lobster().fontFamily,
+                color: OColors.lightRed,
+              ),
+            ),
+          ],
+        ),
         elevation: 2,
-        backgroundColor: Colors.blue.shade700,
+        backgroundColor: Color(0xFF104C91),
+        leading: Builder(
+          builder: (BuildContext context) {
+            return IconButton(
+              icon: Image.asset(
+                height: 28,
+                'assets/icons/menus.png',
+                color: Colors.white,
+              ),
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+            );
+          },
+        ),
       ),
       drawer: Drawer(
         child: Container(
@@ -55,33 +94,37 @@ class _HomePageState extends State<HomePage> {
           child: ListView(
             padding: EdgeInsets.zero,
             children: [
-              DrawerHeader(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.blue.shade700, Colors.blue.shade900],
+              SizedBox(
+                height: 150,
+                child: DrawerHeader(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                    gradient: LinearGradient(
+                      colors: [Colors.blue.shade700, Colors.blue.shade900],
+                    ),
                   ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    const Text(
-                      'On The Go',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      const Text(
+                        'On The Go',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Explore & Connect',
-                      style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: 16,
+                      const SizedBox(height: 8),
+                      Text(
+                        'Explore & Connect',
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 16,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
               _buildDrawerItem(
@@ -102,7 +145,8 @@ class _HomePageState extends State<HomePage> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const SettingsPage()),
+                    MaterialPageRoute(
+                        builder: (context) => const SettingsPage()),
                   );
                 },
               ),
@@ -124,7 +168,8 @@ class _HomePageState extends State<HomePage> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const AboutUsPage()),
+                    MaterialPageRoute(
+                        builder: (context) => const AboutUsPage()),
                   );
                 },
               ),
@@ -272,7 +317,9 @@ class _DrawerItemState extends State<_DrawerItem> {
         curve: Curves.easeInOut,
         transform: Matrix4.identity()..scale(_isHovered ? 1.02 : 1.0),
         decoration: BoxDecoration(
-          color: _isHovered ? Colors.blue.shade50 : Colors.transparent, // Change background color on hover
+          color: _isHovered
+              ? Colors.blue.shade50
+              : Colors.transparent, // Change background color on hover
           borderRadius: BorderRadius.circular(12),
           boxShadow: _isHovered
               ? [
