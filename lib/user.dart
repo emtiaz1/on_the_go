@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:on_the_go_demo/login_page.dart';
 import 'package:video_player/video_player.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class UserPage extends StatefulWidget {
   const UserPage({super.key});
@@ -26,8 +27,6 @@ class _UserPageState extends State<UserPage> {
   String birthday = '';
   String accountCreated = '';
   String facebook = '';
-  String instagram = '';
-  String twitter = '';
 
   bool isLoading = true;
   VideoPlayerController? _videoController;
@@ -81,12 +80,10 @@ class _UserPageState extends State<UserPage> {
           jobTitle = userData['jobTitle'] ?? '';
           institute = userData['institute'] ?? '';
           gender = userData['gender'] ?? '';
-          bloodGroup = userData['bloodGroup'] ?? '';
+          bloodGroup = userData['blood'] ?? '';
           birthday = userData['birthday'] ?? '';
           accountCreated = userData['accountCreated'] ?? '';
           facebook = userData['facebook'] ?? '';
-          instagram = userData['instagram'] ?? '';
-          twitter = userData['twitter'] ?? '';
           isLoading = false;
         });
       } else {
@@ -132,7 +129,7 @@ class _UserPageState extends State<UserPage> {
         borderRadius: BorderRadius.circular(12.0),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
+            color: Color(0x33000000), // Replaced Colors.grey.withOpacity(0.2)
             blurRadius: 8.0,
             offset: const Offset(0, 4),
           ),
@@ -170,6 +167,66 @@ class _UserPageState extends State<UserPage> {
     );
   }
 
+  Widget _buildClickableInfoCard(IconData icon, String title, String value, String url) {
+    return InkWell(
+      onTap: () async {
+        final uri = Uri.parse(url);
+        if (await canLaunchUrl(uri)) {
+          await launchUrl(
+            uri,
+            mode: LaunchMode.externalApplication, // Ensures the URL opens in the browser
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Could not launch URL')),
+          );
+        }
+      },
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        padding: const EdgeInsets.all(16.0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12.0),
+          boxShadow: [
+            BoxShadow(
+              color: Color(0x33000000),
+              blurRadius: 8.0,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Icon(icon, color: Colors.blue, size: 30),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(color: Colors.grey, fontSize: 14),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    value,
+                    style: const TextStyle(
+                      color: Colors.blue,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildBioSection() {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -179,7 +236,7 @@ class _UserPageState extends State<UserPage> {
         borderRadius: BorderRadius.circular(12.0),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
+            color: Color(0x33000000),
             blurRadius: 8.0,
             offset: const Offset(0, 4),
           ),
@@ -246,7 +303,9 @@ class _UserPageState extends State<UserPage> {
                         radius: 65,
                         backgroundImage: imageUrl.isNotEmpty
                             ? NetworkImage(imageUrl)
-                            : const AssetImage('assets/images/default_profile.png') as ImageProvider,
+                            : const AssetImage(
+                                    'assets/images/default_profile.png')
+                                as ImageProvider,
                       ),
                     ),
                     const SizedBox(height: 20),
@@ -263,7 +322,7 @@ class _UserPageState extends State<UserPage> {
                       email.isEmpty ? 'No email' : email,
                       style: TextStyle(
                         fontSize: 16,
-                        color: Colors.white.withOpacity(0.9),
+                        color: Color(0xE6FFFFFF),
                       ),
                     ),
                   ],
@@ -293,12 +352,19 @@ class _UserPageState extends State<UserPage> {
             _buildBioSection(),
 
             // Other Information
-            if (jobTitle.isNotEmpty) _buildInfoCard(Icons.work, 'Job Title', jobTitle),
-            if (institute.isNotEmpty) _buildInfoCard(Icons.school, 'Institute', institute),
-            if (bloodGroup.isNotEmpty) _buildInfoCard(Icons.water_drop, 'Blood Group', bloodGroup),
-            if (gender.isNotEmpty) _buildInfoCard(Icons.person, 'Gender', gender),
-            if (birthday.isNotEmpty) _buildInfoCard(Icons.cake, 'Birthday', birthday),
-            if (accountCreated.isNotEmpty) _buildInfoCard(Icons.date_range, 'Account Created', accountCreated),
+            if (jobTitle.isNotEmpty)
+              _buildInfoCard(Icons.work, 'Job Title', jobTitle),
+            if (institute.isNotEmpty)
+              _buildInfoCard(Icons.school, 'Institute', institute),
+            if (bloodGroup.isNotEmpty)
+              _buildInfoCard(Icons.water_drop, 'Blood Group', bloodGroup),
+            if (gender.isNotEmpty)
+              _buildInfoCard(Icons.person, 'Gender', gender),
+            if (birthday.isNotEmpty)
+              _buildInfoCard(Icons.cake, 'Birthday', birthday),
+            if (accountCreated.isNotEmpty)
+              _buildInfoCard(
+                  Icons.date_range, 'Account Created', accountCreated),
 
             // Contact Information Section
             const Align(
@@ -316,10 +382,15 @@ class _UserPageState extends State<UserPage> {
               ),
             ),
             if (phone.isNotEmpty) _buildInfoCard(Icons.phone, 'Phone', phone),
-            if (location.isNotEmpty) _buildInfoCard(Icons.location_on, 'Location', location),
-            if (facebook.isNotEmpty) _buildInfoCard(Icons.facebook, 'Facebook', facebook),
-            if (instagram.isNotEmpty) _buildInfoCard(Icons.camera_alt, 'Instagram', instagram),
-            if (twitter.isNotEmpty) _buildInfoCard(Icons.alternate_email, 'Twitter', twitter),
+            if (location.isNotEmpty)
+              _buildInfoCard(Icons.location_on, 'Location', location),
+            if (facebook.isNotEmpty)
+              _buildClickableInfoCard(
+                Icons.facebook,
+                'Facebook',
+                facebook,
+                'https://$facebook', // Ensure the URL is properly formatted
+              ),
 
             const SizedBox(height: 30),
 
@@ -380,7 +451,8 @@ class _UserPageState extends State<UserPage> {
               Column(
                 children: posts
                     .map((post) => Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16.0, vertical: 8.0),
                           child: Card(
                             elevation: 3,
                             shape: RoundedRectangleBorder(
@@ -431,7 +503,8 @@ class _UserPageState extends State<UserPage> {
               Column(
                 children: videos
                     .map((video) => Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16.0, vertical: 8.0),
                           child: Card(
                             elevation: 3,
                             shape: RoundedRectangleBorder(
@@ -445,7 +518,8 @@ class _UserPageState extends State<UserPage> {
                                   ClipRRect(
                                     borderRadius: BorderRadius.circular(12.0),
                                     child: AspectRatio(
-                                      aspectRatio: _videoController!.value.aspectRatio,
+                                      aspectRatio:
+                                          _videoController!.value.aspectRatio,
                                       child: VideoPlayer(_videoController!),
                                     ),
                                   )
@@ -499,7 +573,8 @@ class _UserPageState extends State<UserPage> {
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red.shade600,
-                  padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12.0),
                   ),
