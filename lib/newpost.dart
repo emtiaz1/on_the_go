@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart'; // Firestore import
+import 'package:firebase_auth/firebase_auth.dart'; // Firebase Auth import
 
 class NewPostPage extends StatefulWidget {
   const NewPostPage({super.key});
@@ -15,11 +16,23 @@ class _NewPostPageState extends State<NewPostPage> {
   String? _selectedLocation;
   bool _isMovementEnabled = false; // Toggle button state
   final List<String> _locations = ['Dhaka', 'Chittagong', 'Sylhet', 'Khulna'];
+  final List<String> _tags = []; // List to store tags
+
+  @override
+  void dispose() {
+    // Dispose controllers to avoid memory leaks
+    _postController.dispose();
+    _imageLinkController.dispose();
+    _tagsController.dispose();
+    super.dispose();
+  }
 
   Future<void> _submitPost() async {
     if (_postController.text.isEmpty ||
         _imageLinkController.text.isEmpty ||
-        _selectedLocation == null) {
+        _selectedLocation == null ||
+        _tags.isEmpty) {
+      // Check if tags list is empty
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please fill in all fields!')),
       );
@@ -27,16 +40,35 @@ class _NewPostPageState extends State<NewPostPage> {
     }
 
     try {
+      // Get the current user
+      final User? user = FirebaseAuth.instance.currentUser;
+
+      if (user == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('User not logged in!')),
+        );
+        return;
+      }
+
+      final String username =
+          user.displayName ?? 'Anonymous'; // Get username dynamically
+
       // Save post to Firestore
       await FirebaseFirestore.instance.collection('posts').add({
         'content': _postController.text,
-        'imageLink': _imageLinkController.text,
+        'image':
+            _imageLinkController.text, // Updated to match `newsfeed_page.dart`
         'location': _selectedLocation,
-        'tags': _tagsController.text,
+        'tags': _tags, // Save tags as a list
         'movement': _isMovementEnabled, // Store boolean value
-        'reactions': 0,
-        'views': 0,
+        'reactions': {
+          'like': 0,
+          'angry': 0,
+          'sad': 0,
+        }, // Initialize all reactions to 0
+        'views': 0, // Initialize views to 0
         'timestamp': FieldValue.serverTimestamp(),
+        'user': username, // Save the dynamically collected username
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -50,10 +82,12 @@ class _NewPostPageState extends State<NewPostPage> {
       setState(() {
         _selectedLocation = null;
         _isMovementEnabled = false;
+        _tags.clear(); // Clear tags list
       });
     } catch (e) {
+      debugPrint('Error while submitting post: $e'); // Log the error
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
+        const SnackBar(content: Text('An error occurred. Please try again.')),
       );
     }
   }
@@ -85,6 +119,8 @@ class _NewPostPageState extends State<NewPostPage> {
               controller: _postController,
               maxLines: 5,
               decoration: InputDecoration(
+                prefixIcon:
+                    const Icon(Icons.edit, color: Colors.blue), // Edit icon
                 hintText: 'Write something...',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10.0),
@@ -98,6 +134,8 @@ class _NewPostPageState extends State<NewPostPage> {
             TextField(
               controller: _imageLinkController,
               decoration: InputDecoration(
+                prefixIcon:
+                    const Icon(Icons.image, color: Colors.green), // Image icon
                 hintText: 'Enter image link...',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10.0),
@@ -110,6 +148,7 @@ class _NewPostPageState extends State<NewPostPage> {
             // Location Dropdown
             DropdownButtonFormField<String>(
               value: _selectedLocation,
+              hint: const Text('Select Location'), // Placeholder text
               items: _locations
                   .map((location) => DropdownMenuItem(
                         value: location,
@@ -122,6 +161,8 @@ class _NewPostPageState extends State<NewPostPage> {
                 });
               },
               decoration: InputDecoration(
+                prefixIcon: const Icon(Icons.location_on,
+                    color: Colors.orange), // Location icon
                 labelText: 'Select Location',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10.0),
@@ -130,16 +171,62 @@ class _NewPostPageState extends State<NewPostPage> {
             ),
             const SizedBox(height: 20),
 
-            // Tags Input
-            TextField(
-              controller: _tagsController,
-              decoration: InputDecoration(
-                hintText: 'Enter tags (comma-separated)...',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
+            // Tags Input Section
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Tags:',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
-                contentPadding: const EdgeInsets.all(15),
-              ),
+                const SizedBox(height: 10),
+                Wrap(
+                  spacing: 6.0,
+                  children: _tags
+                      .map((tag) => Chip(
+                            label: Text(tag),
+                            backgroundColor: Colors.blue.shade50,
+                            labelStyle: const TextStyle(
+                              fontSize: 12,
+                              color: Colors.blue,
+                            ),
+                            deleteIcon: const Icon(Icons.close,
+                                size: 16, color: Colors.red),
+                            onDeleted: () {
+                              setState(() {
+                                _tags.remove(tag); // Remove tag on delete
+                              });
+                            },
+                          ))
+                      .toList(),
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: _tagsController,
+                  decoration: InputDecoration(
+                    prefixIcon:
+                        const Icon(Icons.tag, color: Colors.purple), // Tag icon
+                    hintText: 'Enter a tag and press Add...',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    contentPadding: const EdgeInsets.all(15),
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.add,
+                          color: Colors.green), // Add icon
+                      onPressed: () {
+                        if (_tagsController.text.trim().isNotEmpty) {
+                          setState(() {
+                            _tags.add(
+                                _tagsController.text.trim()); // Add tag to list
+                            _tagsController.clear(); // Clear input field
+                          });
+                        }
+                      },
+                    ),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 20),
 
@@ -147,9 +234,17 @@ class _NewPostPageState extends State<NewPostPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  'Movement:',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                Row(
+                  children: const [
+                    Icon(Icons.directions_walk,
+                        color: Colors.red), // Movement icon
+                    SizedBox(width: 8),
+                    Text(
+                      'Movement:',
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ],
                 ),
                 Switch(
                   value: _isMovementEnabled,
