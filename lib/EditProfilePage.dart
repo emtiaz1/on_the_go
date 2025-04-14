@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:intl/intl.dart'; // Add this import for date formatting
 
 class EditProfilePage extends StatefulWidget {
   final String name;
@@ -46,6 +47,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
   late String bloodGroup;
   late String birthday;
 
+  final List<String> genderOptions = ['Male', 'Female', 'Other'];
+  final List<String> bloodGroupOptions = ['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'];
+
   @override
   void initState() {
     super.initState();
@@ -90,80 +94,176 @@ class _EditProfilePageState extends State<EditProfilePage> {
     }
   }
 
+  Future<void> _selectBirthday(BuildContext context) async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: birthday.isNotEmpty
+          ? DateFormat('dd/MM/yyyy').parse(birthday)
+          : DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+    );
+
+    if (pickedDate != null) {
+      setState(() {
+        birthday = DateFormat('dd/MM/yyyy').format(pickedDate);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Edit Profile'),
+        backgroundColor: Colors.blue.shade600,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              TextFormField(
-                initialValue: name,
-                decoration: const InputDecoration(labelText: 'Name'),
-                onChanged: (value) => name = value,
-              ),
-              TextFormField(
-                initialValue: email,
-                decoration: const InputDecoration(labelText: 'Email'),
-                onChanged: (value) => email = value,
-              ),
-              TextFormField(
-                initialValue: phone,
-                decoration: const InputDecoration(labelText: 'Phone'),
-                onChanged: (value) => phone = value,
-              ),
-              TextFormField(
-                initialValue: location,
-                decoration: const InputDecoration(labelText: 'Location'),
-                onChanged: (value) => location = value,
-              ),
-              TextFormField(
-                initialValue: bio,
-                decoration: const InputDecoration(labelText: 'Bio'),
-                onChanged: (value) => bio = value,
-              ),
-              TextFormField(
-                initialValue: jobTitle,
-                decoration: const InputDecoration(labelText: 'Job Title'),
-                onChanged: (value) => jobTitle = value,
-              ),
-              TextFormField(
-                initialValue: institute,
-                decoration: const InputDecoration(labelText: 'Institute'),
-                onChanged: (value) => institute = value,
-              ),
-              TextFormField(
-                initialValue: gender,
-                decoration: const InputDecoration(labelText: 'Gender'),
-                onChanged: (value) => gender = value,
-              ),
-              TextFormField(
-                initialValue: bloodGroup,
-                decoration: const InputDecoration(labelText: 'Blood Group'),
-                onChanged: (value) => bloodGroup = value,
-              ),
-              TextFormField(
-                initialValue: birthday,
-                decoration: const InputDecoration(labelText: 'Birthday'),
-                onChanged: (value) => birthday = value,
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    _updateProfile();
-                  }
-                },
-                child: const Text('Save Changes'),
-              ),
-            ],
+      body: SingleChildScrollView(
+        child: Container(
+          padding: const EdgeInsets.all(16.0),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.blue.shade50, Colors.blue.shade100],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+          ),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Edit Your Profile',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blue,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                _buildTextField('Name', name, (value) => name = value),
+                _buildTextField('Email', email, (value) => email = value),
+                _buildTextField('Phone', phone, (value) => phone = value),
+                _buildTextField('Location', location, (value) => location = value),
+                _buildTextField('Bio', bio, (value) => bio = value),
+                _buildTextField('Job Title', jobTitle, (value) => jobTitle = value),
+                _buildTextField('Institute', institute, (value) => institute = value),
+                const SizedBox(height: 20),
+
+                // Gender Dropdown
+                _buildDropdown(
+                  'Gender',
+                  genderOptions,
+                  gender,
+                  (value) => setState(() => gender = value!),
+                ),
+
+                // Blood Group Dropdown
+                _buildDropdown(
+                  'Blood Group',
+                  bloodGroupOptions,
+                  bloodGroup,
+                  (value) => setState(() => bloodGroup = value!),
+                ),
+
+                // Birthday Picker
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: GestureDetector(
+                    onTap: () => _selectBirthday(context),
+                    child: AbsorbPointer(
+                      child: TextFormField(
+                        decoration: InputDecoration(
+                          labelText: 'Birthday',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
+                          filled: true,
+                          fillColor: Colors.white,
+                        ),
+                        controller: TextEditingController(text: birthday),
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 30),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        _updateProfile();
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue.shade600,
+                      padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                    ),
+                    child: const Text(
+                      'Save Changes',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildTextField(String label, String initialValue, Function(String) onChanged) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: TextFormField(
+        initialValue: initialValue,
+        decoration: InputDecoration(
+          labelText: label,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.0),
+          ),
+          filled: true,
+          fillColor: Colors.white,
+        ),
+        onChanged: onChanged,
+      ),
+    );
+  }
+
+  Widget _buildDropdown(
+    String label,
+    List<String> options,
+    String selectedValue,
+    Function(String?) onChanged,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: DropdownButtonFormField<String>(
+        value: selectedValue.isNotEmpty ? selectedValue : null,
+        decoration: InputDecoration(
+          labelText: label,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.0),
+          ),
+          filled: true,
+          fillColor: Colors.white,
+        ),
+        items: options
+            .map((option) => DropdownMenuItem(
+                  value: option,
+                  child: Text(option),
+                ))
+            .toList(),
+        onChanged: onChanged,
       ),
     );
   }
