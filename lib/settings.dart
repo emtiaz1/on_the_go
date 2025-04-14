@@ -45,6 +45,17 @@ class _SettingsPageState extends State<SettingsPage> {
       'title': 'Help',
       'subtitle': 'Help center, contact us, privacy policy',
     },
+    // New icons added below
+    {
+      'icon': Icons.language,
+      'title': 'Language',
+      'subtitle': 'Change app language',
+    },
+    {
+      'icon': Icons.storage,
+      'title': 'Storage',
+      'subtitle': 'Manage storage and data usage',
+    },
   ];
 
   late List<Map<String, dynamic>> _filteredSettingsItems;
