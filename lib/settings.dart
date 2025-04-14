@@ -17,36 +17,42 @@ class _SettingsPageState extends State<SettingsPage> {
       'icon': Icons.vpn_key,
       'title': 'Account',
       'subtitle': 'Security notifications, change number',
+      'color': Colors.red,
     },
     {
       'icon': Icons.lock,
       'title': 'Privacy',
       'subtitle': 'Block contacts, disappearing messages',
+      'color': Colors.green,
     },
     {
       'icon': Icons.account_circle,
       'title': 'Avatar',
       'subtitle': 'Create, edit, profile photo',
+      'color': Colors.blue,
     },
     {
       'icon': Icons.list_alt,
       'title': 'Lists',
       'subtitle': 'Manage people and groups',
+      'color': Colors.orange,
     },
     {
       'icon': Icons.chat,
       'title': 'Chats',
       'subtitle': 'Theme, wallpapers, chat history',
+      'color': Colors.purple,
     },
     {
       'icon': Icons.notifications,
       'title': 'Notifications',
       'subtitle': 'Message, group & call tones',
+      'color': Colors.teal,
       'onTap': (BuildContext context) {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const NotificationSettingsPage(),
+            builder: (context) => NotificationSettingsPage(),
           ),
         );
       },
@@ -55,16 +61,19 @@ class _SettingsPageState extends State<SettingsPage> {
       'icon': Icons.storage,
       'title': 'Storage and data',
       'subtitle': 'Network usage, auto-download',
+      'color': Colors.brown,
     },
     {
       'icon': Icons.language,
       'title': 'App language',
       'subtitle': "English (device's language)",
+      'color': Colors.cyan,
     },
     {
       'icon': Icons.help,
       'title': 'Help',
       'subtitle': 'Help center, contact us, privacy policy',
+      'color': Colors.indigo,
     },
   ];
 
@@ -160,9 +169,10 @@ class _SettingsPageState extends State<SettingsPage> {
             icon: item['icon'],
             title: item['title'],
             subtitle: item['subtitle'],
+            color: item['color'],
             onTap: item['onTap'] != null
                 ? () => item['onTap'](context)
-                : null, // Handle dynamic navigation
+                : null,
           );
         },
       ),
@@ -174,106 +184,83 @@ class _SettingsPageState extends State<SettingsPage> {
     required IconData icon,
     required String title,
     required String subtitle,
+    required Color color,
     VoidCallback? onTap,
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      child: MouseRegion(
-        cursor: SystemMouseCursors.click,
-        child: GestureDetector(
-          onTap: onTap,
-          child: _SettingsItem(
-            icon: icon,
-            title: title,
-            subtitle: subtitle,
-          ),
+      child: GestureDetector(
+        onTap: onTap,
+        child: _SettingsItem(
+          icon: icon,
+          title: title,
+          subtitle: subtitle,
+          color: color,
         ),
       ),
     );
   }
 }
 
-class _SettingsItem extends StatefulWidget {
+class _SettingsItem extends StatelessWidget {
   final IconData icon;
   final String title;
   final String subtitle;
+  final Color color;
 
   const _SettingsItem({
     required this.icon,
     required this.title,
     required this.subtitle,
+    required this.color,
   });
 
   @override
-  _SettingsItemState createState() => _SettingsItemState();
-}
-
-class _SettingsItemState extends State<_SettingsItem> {
-  bool _isHovered = false;
-
-  @override
   Widget build(BuildContext context) {
-    return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.easeInOut,
-        transform: Matrix4.identity()..scale(_isHovered ? 1.01 : 1.0),
-        decoration: BoxDecoration(
-          color: _isHovered ? Colors.lightBlue.shade100 : Colors.transparent,
-          borderRadius: BorderRadius.circular(10),
-        ),
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-        child: Row(
-          children: [
-            Icon(
-              widget.icon,
-              color: Colors.lightBlue.shade700,
-              size: 28,
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.title,
-                    style: const TextStyle(
-                      color: Colors.black87,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    widget.subtitle,
-                    style: TextStyle(
-                      color: Colors.grey.shade700,
-                      fontSize: 14,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            blurRadius: 5,
+            offset: const Offset(0, 3),
+          ),
+        ],
       ),
-    );
-  }
-}
-
-class NotificationSettingsPage extends StatelessWidget {
-  const NotificationSettingsPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Notification Settings'),
-      ),
-      body: const Center(
-        child: Text('Notification settings content goes Here'),
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+      child: Row(
+        children: [
+          CircleAvatar(
+            backgroundColor: color,
+            child: Icon(icon, color: Colors.white),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    color: Colors.black87,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  subtitle,
+                  style: TextStyle(
+                    color: Colors.grey.shade700,
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
