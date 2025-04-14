@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'NotificationSettings.dart';
 import 'data_and_storage.dart';
+import 'privacy_page.dart';
+import 'account_page.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -19,12 +21,28 @@ class _SettingsPageState extends State<SettingsPage> {
       'title': 'Account',
       'subtitle': 'Security notifications, change number',
       'color': Colors.red,
+      'onTap': (BuildContext context) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const AccountPage(),
+          ),
+        );
+      },
     },
     {
       'icon': Icons.lock,
       'title': 'Privacy',
       'subtitle': 'Audience, Visibility, read receipts',
       'color': Colors.green,
+      'onTap': (BuildContext context) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const PrivacyPage(),
+          ),
+        );
+      },
     },
     {
       'icon': Icons.account_circle,
