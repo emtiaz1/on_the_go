@@ -109,6 +109,7 @@ class _LoginPageState extends State<LoginPage> {
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
                       fontFamily: GoogleFonts.lobster().fontFamily,
+                      color: Colors.white,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -182,7 +183,7 @@ class _LoginPageState extends State<LoginPage> {
               ElevatedButton(
                 onPressed: _isLoading ? null : login,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue[300],
+                  backgroundColor: Color(0xFF1E8AC0),
                   padding: EdgeInsets.symmetric(horizontal: 35, vertical: 10),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
