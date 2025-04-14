@@ -110,11 +110,10 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
 
   Future<void> _savePost(Map<String, dynamic> post) async {
     try {
-      // Get the current user's ID and email
+      // Replace with the actual user ID and email
       final userId = FirebaseAuth.instance.currentUser?.uid ?? 'unknown_user';
       final userEmail = FirebaseAuth.instance.currentUser?.email ?? 'unknown_email';
 
-      // Reference to the saved_posts subcollection
       final savedPostRef = FirebaseFirestore.instance
           .collection('users')
           .doc(userId)
@@ -129,19 +128,18 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
         return;
       }
 
-      // Save the post with all its details
+      // Save the post
       await savedPostRef.doc(post['id']).set({
-        'id': post['id'], // Unique ID of the post
-        'content': post['content'] ?? 'No content available',
-        'image': post['image'] ?? '', // Image URL or path
-        'location': post['location'] ?? 'Unknown Location',
-        'tags': post['tags'] ?? [], // Tags associated with the post
-        'user': post['user'] ?? 'Unknown User', // Author of the post
-        'views': post['views'] ?? 0, // Number of views
-        'movement': post['movement'] ?? false, // Movement alert flag
-        'reactions': post['reactions'] ?? {}, // Reactions (like, angry, sad, etc.)
-        'savedAt': Timestamp.now(), // Timestamp when the post was saved
-        'savedBy': userEmail, // Email of the user who saved the post
+        'id': post['id'],
+        'content': post['content'] ?? '',
+        'image': post['image'] ?? '',
+        'location': post['location'] ?? '',
+        'tags': post['tags'] ?? [],
+        'user': post['user'] ?? '',
+        'views': post['views'] ?? 0,
+        'movement': post['movement'] ?? false,
+        'savedAt': Timestamp.now(),
+        'savedBy': userEmail, // Add the user's email
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -151,6 +149,25 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error saving post: $e')),
       );
+    }
+  }
+
+  Future<bool> _isPostSaved(String postId) async {
+    try {
+      final userId = FirebaseAuth.instance.currentUser?.uid;
+      if (userId == null) return false;
+
+      final savedPostRef = FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .collection('saved_posts')
+          .doc(postId);
+
+      final doc = await savedPostRef.get();
+      return doc.exists;
+    } catch (e) {
+      debugPrint('Error checking if post is saved: $e');
+      return false;
     }
   }
 
@@ -300,17 +317,29 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
                   ),
 
                   /// Save Post Button
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton.icon(
-                      onPressed: () => _savePost(post),
-                      icon: const Icon(Icons.bookmark_add_outlined,
-                          color: Colors.blue),
-                      label: const Text(
-                        'Save Post',
-                        style: TextStyle(color: Colors.blue),
-                      ),
-                    ),
+                  FutureBuilder<bool>(
+                    future: _isPostSaved(post['id']),
+                    builder: (context, snapshot) {
+                      final isSaved = snapshot.data ?? false;
+                      return Align(
+                        alignment: Alignment.centerRight,
+                        child: TextButton.icon(
+                          onPressed: isSaved
+                              ? null // Disable the button if already saved
+                              : () => _savePost(post),
+                          icon: Icon(
+                            Icons.bookmark_add_outlined,
+                            color: isSaved ? Colors.grey : Colors.blue,
+                          ),
+                          label: Text(
+                            isSaved ? 'Saved' : 'Save Post',
+                            style: TextStyle(
+                              color: isSaved ? Colors.grey : Colors.blue,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
                   ),
 
                   /// Movement alert
