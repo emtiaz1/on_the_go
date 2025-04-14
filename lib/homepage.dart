@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:iconsax/iconsax.dart';
+import 'package:on_the_go_demo/utils/constans/colors.dart';
 import 'newsfeed_page.dart';
 import 'maps.dart';
 import 'newpost.dart';
@@ -39,9 +42,45 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('On The Go'),
+        title: Row(
+          children: [
+            Text(
+              'On the',
+              style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+                fontFamily: GoogleFonts.lobster().fontFamily,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(width: 6),
+            Text(
+              'Go',
+              style: TextStyle(
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
+                fontFamily: GoogleFonts.lobster().fontFamily,
+                color: OColors.lightRed,
+              ),
+            ),
+          ],
+        ),
         elevation: 2,
-        backgroundColor: Colors.blue.shade700,
+        backgroundColor: const Color(0xFF104C91),
+        leading: Builder(
+          builder: (BuildContext context) {
+            return IconButton(
+              icon: Image.asset(
+                height: 28,
+                'assets/icons/menus.png',
+                color: Colors.white,
+              ),
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+            );
+          },
+        ),
       ),
       drawer: Drawer(
         child: Container(
@@ -55,33 +94,37 @@ class _HomePageState extends State<HomePage> {
           child: ListView(
             padding: EdgeInsets.zero,
             children: [
-              DrawerHeader(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.blue.shade700, Colors.blue.shade900],
+              SizedBox(
+                height: 150,
+                child: DrawerHeader(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                    gradient: LinearGradient(
+                      colors: [Colors.blue.shade700, Colors.blue.shade900],
+                    ),
                   ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    const Text(
-                      'On The Go',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      const Text(
+                        'On The Go',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Explore & Connect',
-                      style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: 16,
+                      const SizedBox(height: 8),
+                      Text(
+                        'Explore & Connect',
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 16,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
               _buildDrawerItem(
@@ -102,7 +145,8 @@ class _HomePageState extends State<HomePage> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const SettingsPage()),
+                    MaterialPageRoute(
+                        builder: (context) => const SettingsPage()),
                   );
                 },
               ),
@@ -124,7 +168,8 @@ class _HomePageState extends State<HomePage> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const AboutUsPage()),
+                    MaterialPageRoute(
+                        builder: (context) => const AboutUsPage()),
                   );
                 },
               ),
@@ -175,34 +220,98 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       body: _pages[_currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: _onTabTapped,
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.blue.shade700,
-        unselectedItemColor: Colors.grey,
-        showUnselectedLabels: true,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.feed),
-            label: 'Newsfeed',
+      bottomNavigationBar: BottomAppBar(
+        shape: const CircularNotchedRectangle(),
+        notchMargin: 8.0,
+        child: Container(
+          height: 70,
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 10,
+                offset: Offset(0, -2),
+              ),
+            ],
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.map),
-            label: 'Maps',
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _buildBottomNavItem(
+                icon: Icons.feed,
+                index: 0,
+                label: 'Newsfeed',
+                size: 25,
+              ),
+              _buildBottomNavItem(
+                icon: Icons.map,
+                index: 1,
+                label: 'Maps',
+                size: 25,
+              ),
+              _buildBottomNavItem(
+                icon: Icons.add_circle,
+                index: 2,
+                label: 'New Post',
+                size: 45,
+              ),
+              _buildBottomNavItem(
+                icon: Icons.notifications,
+                index: 3,
+                label: 'Notifications',
+                size: 25,
+              ),
+              _buildBottomNavItem(
+                icon: Icons.person,
+                index: 4,
+                label: 'User',
+                size: 25,
+              ),
+            ],
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.add_circle, size: 40),
-            label: 'New Post',
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBottomNavItem({
+    required IconData icon,
+    required int index,
+    required String label,
+    double size = 28, // Default size for icons
+  }) {
+    final isSelected = _currentIndex == index;
+
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _currentIndex = index;
+        });
+      },
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            icon,
+            color: isSelected ? const Color(0xFFA52E45) : Colors.black87,
+            size: size, // Use the size parameter
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.notifications),
-            label: 'Notifications',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'User',
-          ),
+          const SizedBox(height: 4),
+          if (isSelected)
+            Container(
+              width: 6,
+              height: 6,
+              decoration: const BoxDecoration(
+                color: Color(0xFFA52E45),
+                shape: BoxShape.circle,
+              ),
+            ),
         ],
       ),
     );
@@ -272,7 +381,9 @@ class _DrawerItemState extends State<_DrawerItem> {
         curve: Curves.easeInOut,
         transform: Matrix4.identity()..scale(_isHovered ? 1.02 : 1.0),
         decoration: BoxDecoration(
-          color: _isHovered ? Colors.blue.shade50 : Colors.transparent, // Change background color on hover
+          color: _isHovered
+              ? Colors.blue.shade50
+              : Colors.transparent, // Change background color on hover
           borderRadius: BorderRadius.circular(12),
           boxShadow: _isHovered
               ? [

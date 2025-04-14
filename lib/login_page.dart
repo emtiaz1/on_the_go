@@ -39,9 +39,31 @@ class _LoginPageState extends State<LoginPage> {
       );
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Login Successful!')),
+        // Show a dialog with a circular loading indicator
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              content: Row(
+                children: [
+                  const CircularProgressIndicator(
+                    color: Color(0xFFA52E45), // Brown color
+                  ),
+                  const SizedBox(width: 20),
+                  const Text(
+                    'Login Successful!',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+            );
+          },
         );
+
+        // Dismiss the dialog after 2 seconds and navigate to the next page
+        await Future.delayed(const Duration(seconds: 2));
+        Navigator.of(context).pop(); // Close the dialog
 
         Navigator.pushReplacement(
           context,
@@ -65,14 +87,42 @@ class _LoginPageState extends State<LoginPage> {
       }
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(message)),
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Login Failed'),
+              content: Text(message),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Close the dialog
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
         );
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('An error occurred. Please try again.')),
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Error'),
+              content: const Text('An error occurred. Please try again.'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Close the dialog
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
         );
       }
     } finally {
@@ -106,17 +156,18 @@ class _LoginPageState extends State<LoginPage> {
                   Text(
                     'On the',
                     style: TextStyle(
-                      fontSize: 28,
+                      fontSize: 45,
                       fontWeight: FontWeight.bold,
                       fontFamily: GoogleFonts.lobster().fontFamily,
+                      color: Colors.black,
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  SizedBox(width: 6),
+                  SizedBox(width: 10),
                   Text(
                     'Go',
                     style: TextStyle(
-                      fontSize: 30,
+                      fontSize: 50,
                       fontWeight: FontWeight.bold,
                       fontFamily: GoogleFonts.lobster().fontFamily,
                       color: OColors.lightRed,
@@ -125,7 +176,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ],
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 30),
               Container(
                 height: 50,
                 decoration: BoxDecoration(
@@ -136,12 +187,18 @@ class _LoginPageState extends State<LoginPage> {
                 child: TextField(
                   controller: usernameController,
                   decoration: InputDecoration(
+                    prefixIcon: Icon(
+                      Icons.email,
+                      color: Colors.grey[600],
+                    ),
                     hintText: 'Email',
                     hintStyle: TextStyle(
-                        color: Colors.grey[600],
-                        fontFamily: GoogleFonts.roboto().fontFamily),
+                      color: Colors.grey[600],
+                      fontFamily: GoogleFonts.roboto().fontFamily,
+                    ),
                     border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(horizontal: 10),
+                    contentPadding: const EdgeInsets.symmetric(
+                        vertical: 15, horizontal: 10), // Adjusted padding
                   ),
                 ),
               ),
@@ -158,10 +215,15 @@ class _LoginPageState extends State<LoginPage> {
                   obscureText:
                       !_isPasswordVisible, // Toggle password visibility
                   decoration: InputDecoration(
+                    prefixIcon: Icon(
+                      Icons.lock,
+                      color: Colors.grey[600],
+                    ),
                     hintText: 'Password',
                     hintStyle: TextStyle(color: Colors.grey[600]),
                     border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(horizontal: 10),
+                    contentPadding: const EdgeInsets.symmetric(
+                        vertical: 15, horizontal: 10), // Adjusted padding
                     suffixIcon: IconButton(
                       icon: Icon(
                         _isPasswordVisible
@@ -182,7 +244,7 @@ class _LoginPageState extends State<LoginPage> {
               ElevatedButton(
                 onPressed: _isLoading ? null : login,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue[300],
+                  backgroundColor: Color(0xFF1E8AC0),
                   padding: EdgeInsets.symmetric(horizontal: 35, vertical: 10),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),

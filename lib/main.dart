@@ -8,7 +8,6 @@ void main() async {
   runApp(const MyApp());
 }
 
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -17,8 +16,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'On The Go',
-      home: LoginPage(),
+      home: const LoginPage(),
     );
   }
 }
-
