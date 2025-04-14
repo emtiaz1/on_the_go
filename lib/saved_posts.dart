@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:on_the_go_demo/OriginalPostPage.dart';
 
 class SavedPostsPage extends StatelessWidget {
   const SavedPostsPage({super.key});
@@ -60,6 +61,15 @@ class SavedPostsPage extends StatelessWidget {
                 child: ListTile(
                   title: Text(post['content'] ?? 'No Content'),
                   subtitle: Text('Saved by: ${post['savedBy'] ?? 'Unknown'}'),
+                  onTap: () {
+                    // Navigate to the original post page
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => OriginalPostPage(post: post),
+                      ),
+                    );
+                  },
                 ),
               );
             },
