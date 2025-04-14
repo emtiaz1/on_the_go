@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class NewsFeedPage extends StatefulWidget {
   const NewsFeedPage({super.key});
@@ -103,6 +104,52 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error updating reaction: $e')),
+      );
+    }
+  }
+
+  Future<void> _savePost(Map<String, dynamic> post) async {
+    try {
+      // Get the current user's ID and email
+      final userId = FirebaseAuth.instance.currentUser?.uid ?? 'unknown_user';
+      final userEmail = FirebaseAuth.instance.currentUser?.email ?? 'unknown_email';
+
+      // Reference to the saved_posts subcollection
+      final savedPostRef = FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .collection('saved_posts');
+
+      // Check if the post is already saved
+      final existingPost = await savedPostRef.doc(post['id']).get();
+      if (existingPost.exists) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Post already saved!')),
+        );
+        return;
+      }
+
+      // Save the post with all its details
+      await savedPostRef.doc(post['id']).set({
+        'id': post['id'], // Unique ID of the post
+        'content': post['content'] ?? 'No content available',
+        'image': post['image'] ?? '', // Image URL or path
+        'location': post['location'] ?? 'Unknown Location',
+        'tags': post['tags'] ?? [], // Tags associated with the post
+        'user': post['user'] ?? 'Unknown User', // Author of the post
+        'views': post['views'] ?? 0, // Number of views
+        'movement': post['movement'] ?? false, // Movement alert flag
+        'reactions': post['reactions'] ?? {}, // Reactions (like, angry, sad, etc.)
+        'savedAt': Timestamp.now(), // Timestamp when the post was saved
+        'savedBy': userEmail, // Email of the user who saved the post
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Post saved successfully!')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error saving post: $e')),
       );
     }
   }
@@ -219,7 +266,8 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
                                   ? Colors.blue
                                   : Colors.grey,
                             ),
-                            onPressed: () => _updateReaction(post['id'], 'angry'),
+                            onPressed: () =>
+                                _updateReaction(post['id'], 'angry'),
                           ),
                           Text('${reactions['angry'] ?? 0}'),
                           const SizedBox(width: 8),
@@ -239,7 +287,8 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
                       /// Views
                       Row(
                         children: [
-                          const Icon(Icons.remove_red_eye_outlined, size: 18, color: Colors.grey),
+                          const Icon(Icons.remove_red_eye_outlined,
+                              size: 18, color: Colors.grey),
                           const SizedBox(width: 4),
                           Text(
                             '${post['views']} views',
@@ -248,6 +297,20 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
                         ],
                       ),
                     ],
+                  ),
+
+                  /// Save Post Button
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton.icon(
+                      onPressed: () => _savePost(post),
+                      icon: const Icon(Icons.bookmark_add_outlined,
+                          color: Colors.blue),
+                      label: const Text(
+                        'Save Post',
+                        style: TextStyle(color: Colors.blue),
+                      ),
+                    ),
                   ),
 
                   /// Movement alert

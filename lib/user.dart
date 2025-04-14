@@ -1,9 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:on_the_go_demo/get_data_page.dart';
 import 'package:on_the_go_demo/login_page.dart';
 import 'package:video_player/video_player.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class UserPage extends StatefulWidget {
   const UserPage({super.key});
@@ -16,18 +16,23 @@ class _UserPageState extends State<UserPage> {
   String name = '';
   String email = '';
   String phone = '';
-  String location = ''; // Added location field
-  String imageUrl = ''; // URL for the user's profile picture
-  String selectedOption = ''; // Default selected option
-  String bio = ''; // Editable bio
-  String jobTitle = ''; // Editable job title
-  String company = ''; // Editable company name
-  String university = ''; // Editable university
+  String location = '';
+  String imageUrl = '';
+  String selectedOption = 'Posts';
+  String bio = '';
+  String jobTitle = '';
+  String institute = '';
+  String gender = '';
+  String bloodGroup = '';
+  String birthday = '';
+  String accountCreated = '';
+  String facebook = '';
+
   bool isLoading = true;
-  VideoPlayerController? _videoController; // Video player controller
+  VideoPlayerController? _videoController;
 
   final List<String> posts = [
-    'Avois Mirpur 10 circle, Protest is going on. huge traffic here!',
+    'Avoid Mirpur 10 circle, protest is going on. Huge traffic here!',
     'Traffic update: Heavy traffic on Savar Birulia Road. Avoid if possible.',
     'Fire on Gazipur Steelteck Factory!'
   ];
@@ -49,6 +54,7 @@ class _UserPageState extends State<UserPage> {
   }
 
   Future<void> fetchUserData() async {
+    final documentId = FirebaseAuth.instance.currentUser?.uid;
     if (documentId == null) {
       setState(() {
         isLoading = false;
@@ -57,7 +63,6 @@ class _UserPageState extends State<UserPage> {
     }
 
     try {
-      // Fetch user data from Firestore using the global document ID
       DocumentSnapshot userDoc = await FirebaseFirestore.instance
           .collection('users')
           .doc(documentId)
@@ -69,12 +74,16 @@ class _UserPageState extends State<UserPage> {
           name = userData['name'] ?? '';
           email = userData['email'] ?? '';
           phone = userData['phone'] ?? '';
-          location = userData['location'] ?? ''; // Load location
+          location = userData['location'] ?? '';
           imageUrl = userData['imageUrl'] ?? '';
           bio = userData['bio'] ?? '';
           jobTitle = userData['jobTitle'] ?? '';
-          company = userData['company'] ?? '';
-          university = userData['university'] ?? '';
+          institute = userData['institute'] ?? '';
+          gender = userData['gender'] ?? '';
+          bloodGroup = userData['blood'] ?? '';
+          birthday = userData['birthday'] ?? '';
+          accountCreated = userData['accountCreated'] ?? '';
+          facebook = userData['facebook'] ?? '';
           isLoading = false;
         });
       } else {
@@ -95,120 +104,168 @@ class _UserPageState extends State<UserPage> {
     }
   }
 
-  Future<void> saveUserData() async {
-    if (documentId == null) return;
-
-    try {
-      await FirebaseFirestore.instance.collection('users').doc(documentId).set({
-        'name': name,
-        'email': email,
-        'phone': phone,
-        'location': location, // Save location
-        'imageUrl': imageUrl,
-        'bio': bio,
-        'jobTitle': jobTitle,
-        'company': company,
-        'university': university,
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('User data saved successfully')),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error saving user data: $e')),
-      );
-    }
-  }
-
-  void _editInfo(String title, String currentValue, Function(String) onSave) {
-    TextEditingController controller =
-        TextEditingController(text: currentValue);
-
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('Edit $title'),
-          content: TextField(
-            controller: controller,
-            decoration: InputDecoration(
-              hintText: 'Enter new $title',
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-              },
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                onSave(controller.text); // Save the new value
-                saveUserData(); // Save updated data to Firestore
-                Navigator.of(context).pop(); // Close the dialog
-              },
-              child: const Text('Save'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   void _playVideo(String videoPath) {
-    if (_videoController != null) {
-      _videoController!.dispose(); // Dispose the previous controller
-    }
-
+    _videoController?.dispose();
     _videoController = VideoPlayerController.asset(videoPath)
       ..initialize().then((_) {
-        setState(() {}); // Refresh the UI after initialization
-        _videoController!.play(); // Start playing the video
+        setState(() {
+          _videoController!.play();
+        });
       });
-  }
-
-  void _editProfilePicture() {
-    TextEditingController controller = TextEditingController(text: imageUrl);
-
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Edit Profile Picture'),
-          content: TextField(
-            controller: controller,
-            decoration: const InputDecoration(
-              hintText: 'Enter image URL',
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-              },
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  imageUrl = controller.text; // Update the profile picture URL
-                });
-                saveUserData(); // Save updated data to Firestore
-                Navigator.of(context).pop(); // Close the dialog
-              },
-              child: const Text('Save'),
-            ),
-          ],
-        );
-      },
-    );
   }
 
   @override
   void dispose() {
-    _videoController?.dispose(); // Dispose the video controller when not needed
+    _videoController?.dispose();
     super.dispose();
+  }
+
+  Widget _buildInfoCard(IconData icon, String title, String value) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12.0),
+        boxShadow: [
+          BoxShadow(
+            color: Color(0x33000000), // Replaced Colors.grey.withOpacity(0.2)
+            blurRadius: 8.0,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: Colors.blue.shade700, size: 30),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    color: Colors.grey.shade600,
+                    fontSize: 14,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  value.isEmpty ? 'Not provided' : value,
+                  style: TextStyle(
+                    color: Colors.black87,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildClickableInfoCard(IconData icon, String title, String value, String url) {
+    return InkWell(
+      onTap: () async {
+        final uri = Uri.parse(url);
+        if (await canLaunchUrl(uri)) {
+          await launchUrl(
+            uri,
+            mode: LaunchMode.externalApplication, // Ensures the URL opens in the browser
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Could not launch URL')),
+          );
+        }
+      },
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        padding: const EdgeInsets.all(16.0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12.0),
+          boxShadow: [
+            BoxShadow(
+              color: Color(0x33000000),
+              blurRadius: 8.0,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Icon(icon, color: Colors.blue, size: 30),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(color: Colors.grey, fontSize: 14),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    value,
+                    style: const TextStyle(
+                      color: Colors.blue,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBioSection() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12.0),
+        boxShadow: [
+          BoxShadow(
+            color: Color(0x33000000),
+            blurRadius: 8.0,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Bio',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.blue.shade700,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            bio.isEmpty ? 'No bio provided.' : bio,
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.black87,
+              height: 1.5,
+            ),
+            textAlign: TextAlign.justify,
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -218,63 +275,62 @@ class _UserPageState extends State<UserPage> {
     }
 
     return Scaffold(
+      backgroundColor: Colors.grey.shade100,
       body: SingleChildScrollView(
         child: Column(
           children: [
-            const SizedBox(height: 50), // Add spacing at the top
-            // Profile Picture
-            GestureDetector(
-              onTap: _editProfilePicture, // Open dialog to edit profile picture
-              child: Container(
-                width: 120,
-                height: 120,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: imageUrl.isNotEmpty
-                        ? NetworkImage(imageUrl)
-                        : const AssetImage('assets/images/default_profile.png')
-                            as ImageProvider,
-                    fit: BoxFit.cover,
-                  ),
-                  border: Border.all(color: Colors.blue, width: 2),
-                  borderRadius:
-                      BorderRadius.circular(8), // Slightly rounded corners
+            // Header Section
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.blue.shade700, Colors.blue.shade400],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
                 ),
-                child: Align(
-                  alignment: Alignment.bottomRight,
-                  child: Container(
-                    width: 25,
-                    height: 25,
-                    decoration: BoxDecoration(
-                      color: Colors.blue,
-                      borderRadius:
-                          BorderRadius.circular(4), // Match the square shape
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(30),
+                  bottomRight: Radius.circular(30),
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16.0, 50.0, 16.0, 30.0),
+                child: Column(
+                  children: [
+                    CircleAvatar(
+                      radius: 70,
+                      backgroundColor: Colors.white,
+                      child: CircleAvatar(
+                        radius: 65,
+                        backgroundImage: imageUrl.isNotEmpty
+                            ? NetworkImage(imageUrl)
+                            : const AssetImage(
+                                    'assets/images/default_profile.png')
+                                as ImageProvider,
+                      ),
                     ),
-                    child:
-                        const Icon(Icons.edit, color: Colors.white, size: 15),
-                  ),
+                    const SizedBox(height: 20),
+                    Text(
+                      name.isEmpty ? 'User' : name,
+                      style: const TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      email.isEmpty ? 'No email' : email,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Color(0xE6FFFFFF),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
             const SizedBox(height: 20),
-            // User Name
-            Text(
-              name,
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 10),
-            // User Email
-            Text(
-              email,
-              style: const TextStyle(
-                fontSize: 16,
-                color: Colors.grey,
-              ),
-            ),
-            const SizedBox(height: 30),
+
             // About Section
             const Align(
               alignment: Alignment.centerLeft,
@@ -283,258 +339,114 @@ class _UserPageState extends State<UserPage> {
                 child: Text(
                   'About',
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 22,
                     fontWeight: FontWeight.bold,
+                    color: Colors.black87,
                   ),
                 ),
               ),
             ),
             const SizedBox(height: 10),
-            // Bio
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Text(
-                      bio,
-                      style: const TextStyle(fontSize: 16, color: Colors.grey),
-                      textAlign: TextAlign.justify,
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.edit, color: Colors.blue),
-                    onPressed: () {
-                      _editInfo('Bio', bio, (newValue) {
-                        setState(() {
-                          bio = newValue;
-                        });
-                      });
-                    },
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
-            // Job
-            ListTile(
-              leading: const Icon(Icons.work, color: Colors.blue),
-              title: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Text(jobTitle),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.edit, color: Colors.blue),
-                    onPressed: () {
-                      _editInfo('Job Title', jobTitle, (newValue) {
-                        setState(() {
-                          jobTitle = newValue;
-                        });
-                      });
-                    },
-                  ),
-                ],
-              ),
-              subtitle: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Text(company),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.edit, color: Colors.blue),
-                    onPressed: () {
-                      _editInfo('Company', company, (newValue) {
-                        setState(() {
-                          company = newValue;
-                        });
-                      });
-                    },
-                  ),
-                ],
-              ),
-            ),
-            // University
-            ListTile(
-              leading: const Icon(Icons.school, color: Colors.blue),
-              title: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Text(university),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.edit, color: Colors.blue),
-                    onPressed: () {
-                      _editInfo('University', university, (newValue) {
-                        setState(() {
-                          university = newValue;
-                        });
-                      });
-                    },
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 30),
-            // Contact Information
+
+            // Bio Section
+            _buildBioSection(),
+
+            // Other Information
+            if (jobTitle.isNotEmpty)
+              _buildInfoCard(Icons.work, 'Job Title', jobTitle),
+            if (institute.isNotEmpty)
+              _buildInfoCard(Icons.school, 'Institute', institute),
+            if (bloodGroup.isNotEmpty)
+              _buildInfoCard(Icons.water_drop, 'Blood Group', bloodGroup),
+            if (gender.isNotEmpty)
+              _buildInfoCard(Icons.person, 'Gender', gender),
+            if (birthday.isNotEmpty)
+              _buildInfoCard(Icons.cake, 'Birthday', birthday),
+            if (accountCreated.isNotEmpty)
+              _buildInfoCard(
+                  Icons.date_range, 'Account Created', accountCreated),
+
+            // Contact Information Section
             const Align(
               alignment: Alignment.centerLeft,
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.0),
+                padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
                 child: Text(
                   'Contact Information',
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 22,
                     fontWeight: FontWeight.bold,
+                    color: Colors.black87,
                   ),
                 ),
               ),
             ),
-            const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Row(
-                children: [
-                  const Icon(Icons.phone, color: Colors.blue),
-                  const SizedBox(width: 10),
-                  Text(
-                    phone,
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.edit, color: Colors.blue),
-                    onPressed: () {
-                      _editInfo('Phone', phone, (newValue) {
-                        setState(() {
-                          phone = newValue;
-                        });
-                      });
-                    },
+            if (phone.isNotEmpty) _buildInfoCard(Icons.phone, 'Phone', phone),
+            if (location.isNotEmpty)
+              _buildInfoCard(Icons.location_on, 'Location', location),
+            if (facebook.isNotEmpty)
+              _buildClickableInfoCard(
+                Icons.facebook,
+                'Facebook',
+                facebook,
+                'https://$facebook', // Ensure the URL is properly formatted
+              ),
+
+            const SizedBox(height: 30),
+
+            // Tabs for Posts, Photos, Videos
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 16.0),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12.0),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.2),
+                    blurRadius: 8.0,
+                    offset: const Offset(0, 4),
                   ),
                 ],
               ),
-            ),
-            const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Row(
-                children: [
-                  const Icon(Icons.location_on, color: Colors.blue),
-                  const SizedBox(width: 10),
-                  Text(
-                    location,
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.edit, color: Colors.blue),
-                    onPressed: () {
-                      _editInfo('Location', location, (newValue) {
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: ['Posts', 'Photos', 'Videos'].map((option) {
+                  return Expanded(
+                    child: GestureDetector(
+                      onTap: () {
                         setState(() {
-                          location = newValue;
+                          selectedOption = option;
                         });
-                      });
-                    },
-                  ),
-                ],
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 15.0),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12.0),
+                          color: selectedOption == option
+                              ? Colors.blue.shade700
+                              : Colors.transparent,
+                        ),
+                        child: Center(
+                          child: Text(
+                            option,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: selectedOption == option
+                                  ? Colors.white
+                                  : Colors.grey.shade600,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
               ),
-            ),
-            const SizedBox(height: 30), // Space before the options bar
-            // Options Bar
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      selectedOption = 'Posts';
-                    });
-                  },
-                  child: Column(
-                    children: [
-                      Text(
-                        'Posts',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: selectedOption == 'Posts'
-                              ? Colors.blue
-                              : Colors.grey,
-                        ),
-                      ),
-                      if (selectedOption == 'Posts')
-                        Container(
-                          margin: const EdgeInsets.only(top: 5),
-                          height: 2,
-                          width: 50,
-                          color: Colors.blue,
-                        ),
-                    ],
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      selectedOption = 'Photos';
-                    });
-                  },
-                  child: Column(
-                    children: [
-                      Text(
-                        'Photos',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: selectedOption == 'Photos'
-                              ? Colors.blue
-                              : Colors.grey,
-                        ),
-                      ),
-                      if (selectedOption == 'Photos')
-                        Container(
-                          margin: const EdgeInsets.only(top: 5),
-                          height: 2,
-                          width: 50,
-                          color: Colors.blue,
-                        ),
-                    ],
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      selectedOption = 'Videos';
-                    });
-                  },
-                  child: Column(
-                    children: [
-                      Text(
-                        'Videos',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: selectedOption == 'Videos'
-                              ? Colors.blue
-                              : Colors.grey,
-                        ),
-                      ),
-                      if (selectedOption == 'Videos')
-                        Container(
-                          margin: const EdgeInsets.only(top: 5),
-                          height: 2,
-                          width: 50,
-                          color: Colors.blue,
-                        ),
-                    ],
-                  ),
-                ),
-              ],
             ),
             const SizedBox(height: 20),
-            // Content Based on Selected Option
+
+            // Content based on selected tab
             if (selectedOption == 'Posts')
               Column(
                 children: posts
@@ -542,12 +454,18 @@ class _UserPageState extends State<UserPage> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 16.0, vertical: 8.0),
                           child: Card(
-                            elevation: 2,
+                            elevation: 3,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12.0),
+                            ),
                             child: Padding(
                               padding: const EdgeInsets.all(16.0),
                               child: Text(
                                 post,
-                                style: const TextStyle(fontSize: 16),
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black87,
+                                ),
                               ),
                             ),
                           ),
@@ -567,10 +485,16 @@ class _UserPageState extends State<UserPage> {
                 itemCount: images.length,
                 itemBuilder: (context, index) {
                   return Card(
-                    elevation: 2,
-                    child: Image.asset(
-                      images[index],
-                      fit: BoxFit.cover,
+                    elevation: 3,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12.0),
+                      child: Image.asset(
+                        images[index],
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   );
                 },
@@ -582,30 +506,39 @@ class _UserPageState extends State<UserPage> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 16.0, vertical: 8.0),
                           child: Card(
-                            elevation: 2,
+                            elevation: 3,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12.0),
+                            ),
                             child: Column(
                               children: [
                                 if (_videoController != null &&
                                     _videoController!.value.isInitialized &&
                                     _videoController!.dataSource == video)
-                                  AspectRatio(
-                                    aspectRatio:
-                                        _videoController!.value.aspectRatio,
-                                    child: VideoPlayer(_videoController!),
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(12.0),
+                                    child: AspectRatio(
+                                      aspectRatio:
+                                          _videoController!.value.aspectRatio,
+                                      child: VideoPlayer(_videoController!),
+                                    ),
                                   )
                                 else
                                   ListTile(
-                                    leading: const Icon(Icons.play_circle_fill,
-                                        color: Colors.blue, size: 40),
+                                    leading: Icon(
+                                      Icons.play_circle_fill,
+                                      color: Colors.blue.shade700,
+                                      size: 40,
+                                    ),
                                     title: Text(
-                                      video
-                                          .split('/')
-                                          .last, // Display video name
-                                      style: const TextStyle(fontSize: 16),
+                                      video.split('/').last,
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.black87,
+                                      ),
                                     ),
                                     onTap: () {
-                                      _playVideo(
-                                          video); // Play the selected video
+                                      _playVideo(video);
                                     },
                                   ),
                                 if (_videoController != null &&
@@ -614,6 +547,9 @@ class _UserPageState extends State<UserPage> {
                                   VideoProgressIndicator(
                                     _videoController!,
                                     allowScrubbing: true,
+                                    colors: VideoProgressColors(
+                                      playedColor: Colors.blue.shade700,
+                                    ),
                                   ),
                               ],
                             ),
@@ -621,27 +557,36 @@ class _UserPageState extends State<UserPage> {
                         ))
                     .toList(),
               ),
+
+            const SizedBox(height: 30),
+
+            // Sign Out Button
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: ElevatedButton(
                 onPressed: () async {
-                  await FirebaseAuth.instance.signOut(); // Sign out the user
+                  await FirebaseAuth.instance.signOut();
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(builder: (context) => const LoginPage()),
-                  ); // Navigate back to the login page
+                  );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red[400],
+                  backgroundColor: Colors.red.shade600,
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
+                      const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(12.0),
                   ),
+                  elevation: 5,
                 ),
                 child: const Text(
                   'Sign Out',
-                  style: TextStyle(fontSize: 16, color: Colors.white),
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
