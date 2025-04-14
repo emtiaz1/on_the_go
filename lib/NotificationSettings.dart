@@ -1,27 +1,5 @@
 import 'package:flutter/material.dart';
-
-class NotificationDetailScreen extends StatelessWidget {
-  final String title;
-
-  const NotificationDetailScreen({required this.title, super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(title),
-        backgroundColor: const Color(0xFF1F6FEB),
-      ),
-      body: Center(
-        child: Text(
-          'Details for $title',
-          style: const TextStyle(fontSize: 18, color: Colors.white),
-        ),
-      ),
-      backgroundColor: const Color(0xFF0D1117),
-    );
-  }
-}
+import 'notification_detail.dart';
 
 class NotificationSettingsPage extends StatelessWidget {
   final List<Map<String, dynamic>> items = [
@@ -40,21 +18,18 @@ class NotificationSettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Show only the first half of the items
-    final halfItems = items.sublist(0, (items.length / 2).ceil());
-
     return Scaffold(
-      backgroundColor: const Color(0xFF0D1117),
+      backgroundColor: Color(0xFF0D1117), // Dark bluish background
       appBar: AppBar(
-        title: const Text('Notifications'),
-        backgroundColor: const Color(0xFF1F6FEB),
+        title: Text('Notifications'),
+        backgroundColor: Color(0xFF1F6FEB), // Bright bluish AppBar
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               "What notifications you receive",
               style: TextStyle(
                 fontSize: 16,
@@ -62,48 +37,48 @@ class NotificationSettingsPage extends StatelessWidget {
                 color: Colors.lightBlueAccent,
               ),
             ),
-            const SizedBox(height: 8),
-            const Text(
+            SizedBox(height: 8),
+            Text(
               "Facebook may still send you important notifications about your account and content outside of your preferred notification settings.",
-              style: TextStyle(color: Colors.grey),
+              style: TextStyle(color: Colors.grey[400]),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             Expanded(
               child: ListView.builder(
-                itemCount: halfItems.length,
+                itemCount: items.length,
                 itemBuilder: (context, index) {
-                  final item = halfItems[index];
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => NotificationDetailScreen(
-                            title: item['title'],
+                  final item = items[index];
+                  return MouseRegion(
+                    cursor: SystemMouseCursors.click,
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => NotificationDetailScreen(
+                              title: item['title'],
+                            ),
                           ),
+                        );
+                      },
+                      child: Card(
+                        color: Color(0xFF1E293B), // Dark bluish card
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                      );
-                    },
-                    child: Card(
-                      color: const Color(0xFF1E293B),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      elevation: 4,
-                      child: ListTile(
-                        leading: Icon(item['icon'], color: Colors.lightBlue),
-                        title: Text(
-                          item['title'],
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                        subtitle: const Text(
-                          'Push, Email, SMS',
-                          style: TextStyle(color: Colors.blueAccent),
-                        ),
-                        trailing: const Icon(
-                          Icons.arrow_forward_ios,
-                          size: 16,
-                          color: Colors.blueAccent,
+                        elevation: 4,
+                        child: ListTile(
+                          leading: Icon(item['icon'], color: Colors.lightBlue),
+                          title: Text(
+                            item['title'],
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          subtitle: Text(
+                            'Push, Email, SMS',
+                            style: TextStyle(color: Colors.blue[200]),
+                          ),
+                          trailing: Icon(Icons.arrow_forward_ios,
+                              size: 16, color: Colors.blueAccent),
                         ),
                       ),
                     ),
