@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart'; // Firestore import
+import 'package:firebase_auth/firebase_auth.dart'; // Firebase Auth import
 
 class NewPostPage extends StatefulWidget {
   const NewPostPage({super.key});
@@ -39,6 +40,19 @@ class _NewPostPageState extends State<NewPostPage> {
     }
 
     try {
+      // Get the current user
+      final User? user = FirebaseAuth.instance.currentUser;
+
+      if (user == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('User not logged in!')),
+        );
+        return;
+      }
+
+      final String username =
+          user.displayName ?? 'Anonymous'; // Get username dynamically
+
       // Save post to Firestore
       await FirebaseFirestore.instance.collection('posts').add({
         'content': _postController.text,
@@ -54,7 +68,7 @@ class _NewPostPageState extends State<NewPostPage> {
         }, // Initialize all reactions to 0
         'views': 0, // Initialize views to 0
         'timestamp': FieldValue.serverTimestamp(),
-        'user': 'Unknown User', // Placeholder for user (can be updated later)
+        'user': username, // Save the dynamically collected username
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
