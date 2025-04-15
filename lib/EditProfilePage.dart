@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:intl/intl.dart'; // Add this import for date formatting
+import 'package:intl/intl.dart';
 
 class EditProfilePage extends StatefulWidget {
   final String name;
@@ -116,18 +116,19 @@ class _EditProfilePageState extends State<EditProfilePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Edit Profile'),
-        backgroundColor: Colors.blue.shade600,
+        foregroundColor: Colors.white,
+        backgroundColor: const Color(0xFF104C91),
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          padding: const EdgeInsets.all(16.0),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.blue.shade50, Colors.blue.shade100],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-            ),
+      body: Container(
+        padding: const EdgeInsets.all(16.0),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.blue.shade50, Colors.blue.shade100],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
           ),
+        ),
+        child: SingleChildScrollView(
           child: Form(
             key: _formKey,
             child: Column(
@@ -142,34 +143,64 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                _buildTextField('Name', name, (value) => name = value),
-                _buildTextField('Email', email, (value) => email = value),
-                _buildTextField('Phone', phone, (value) => phone = value),
-                _buildTextField('Location', location, (value) => location = value),
-                _buildTextField('Bio', bio, (value) => bio = value),
-                _buildTextField('Job Title', jobTitle, (value) => jobTitle = value),
-                _buildTextField('Institute', institute, (value) => institute = value),
-                const SizedBox(height: 20),
-
+                
+                // Name Field
+                _buildFieldContainer(
+                  child: _buildTextField('Name', name, (value) => name = value),
+                ),
+                
+                // Email Field
+                _buildFieldContainer(
+                  child: _buildTextField('Email', email, (value) => email = value),
+                ),
+                
+                // Phone Field
+                _buildFieldContainer(
+                  child: _buildTextField('Phone', phone, (value) => phone = value),
+                ),
+                
+                // Location Field
+                _buildFieldContainer(
+                  child: _buildTextField('Location', location, (value) => location = value),
+                ),
+                
+                // Bio Field
+                _buildFieldContainer(
+                  child: _buildTextField('Bio', bio, (value) => bio = value),
+                ),
+                
+                // Job Title Field
+                _buildFieldContainer(
+                  child: _buildTextField('Job Title', jobTitle, (value) => jobTitle = value),
+                ),
+                
+                // Institute Field
+                _buildFieldContainer(
+                  child: _buildTextField('Institute', institute, (value) => institute = value),
+                ),
+                
                 // Gender Dropdown
-                _buildDropdown(
-                  'Gender',
-                  genderOptions,
-                  gender,
-                  (value) => setState(() => gender = value!),
+                _buildFieldContainer(
+                  child: _buildDropdown(
+                    'Gender',
+                    genderOptions,
+                    gender,
+                    (value) => setState(() => gender = value!),
+                  ),
                 ),
-
+                
                 // Blood Group Dropdown
-                _buildDropdown(
-                  'Blood Group',
-                  bloodGroupOptions,
-                  bloodGroup,
-                  (value) => setState(() => bloodGroup = value!),
+                _buildFieldContainer(
+                  child: _buildDropdown(
+                    'Blood Group',
+                    bloodGroupOptions,
+                    bloodGroup,
+                    (value) => setState(() => bloodGroup = value!),
+                  ),
                 ),
-
+                
                 // Birthday Picker
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                _buildFieldContainer(
                   child: GestureDetector(
                     onTap: () => _selectBirthday(context),
                     child: AbsorbPointer(
@@ -181,15 +212,19 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           ),
                           filled: true,
                           fillColor: Colors.white,
+                          suffixIcon: const Icon(Icons.calendar_today),
                         ),
                         controller: TextEditingController(text: birthday),
                       ),
                     ),
                   ),
                 ),
-
+                
                 const SizedBox(height: 30),
-                Center(
+                
+                // Save Button
+                SizedBox(
+                  width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
@@ -197,8 +232,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue.shade600,
-                      padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                      backgroundColor: const Color(0xFF104C91),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12.0),
                       ),
@@ -221,21 +256,25 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
+  Widget _buildFieldContainer({required Widget child}) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      child: child,
+    );
+  }
+
   Widget _buildTextField(String label, String initialValue, Function(String) onChanged) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: TextFormField(
-        initialValue: initialValue,
-        decoration: InputDecoration(
-          labelText: label,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12.0),
-          ),
-          filled: true,
-          fillColor: Colors.white,
+    return TextFormField(
+      initialValue: initialValue,
+      decoration: InputDecoration(
+        labelText: label,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12.0),
         ),
-        onChanged: onChanged,
+        filled: true,
+        fillColor: Colors.white,
       ),
+      onChanged: onChanged,
     );
   }
 
@@ -245,26 +284,23 @@ class _EditProfilePageState extends State<EditProfilePage> {
     String selectedValue,
     Function(String?) onChanged,
   ) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: DropdownButtonFormField<String>(
-        value: selectedValue.isNotEmpty ? selectedValue : null,
-        decoration: InputDecoration(
-          labelText: label,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12.0),
-          ),
-          filled: true,
-          fillColor: Colors.white,
+    return DropdownButtonFormField<String>(
+      value: selectedValue.isNotEmpty ? selectedValue : null,
+      decoration: InputDecoration(
+        labelText: label,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12.0),
         ),
-        items: options
-            .map((option) => DropdownMenuItem(
-                  value: option,
-                  child: Text(option),
-                ))
-            .toList(),
-        onChanged: onChanged,
+        filled: true,
+        fillColor: Colors.white,
       ),
+      items: options
+          .map((option) => DropdownMenuItem(
+                value: option,
+                child: Text(option),
+              ))
+          .toList(),
+      onChanged: onChanged,
     );
   }
 }
