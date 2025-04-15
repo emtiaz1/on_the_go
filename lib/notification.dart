@@ -1,10 +1,5 @@
 import 'package:flutter/material.dart';
-<<<<<<< HEAD
 import 'package:cloud_firestore/cloud_firestore.dart';
-=======
-import 'package:google_fonts/google_fonts.dart';
-import 'package:on_the_go_demo/utils/constans/colors.dart';
->>>>>>> a97f52e2f0349f0835df06f1cef83a2b3066a003
 
 class NotificationPage extends StatefulWidget {
   const NotificationPage({super.key});
@@ -88,7 +83,8 @@ class _NotificationPageState extends State<NotificationPage> {
             setState(() {
               notifications.insert(0, {
                 'name': "Someone", // Replace userName with "Someone"
-                'message': "Someone posted from ${data['location']} about ${data['tags']}",
+                'message':
+                    "Someone posted from ${data['location']} about ${data['tags']}",
                 'time': "Just now",
                 'post': data['content'],
                 'reaction': null,
@@ -104,50 +100,7 @@ class _NotificationPageState extends State<NotificationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.lightBlue.shade50, // Light blue background
-      appBar: AppBar(
-<<<<<<< HEAD
-        backgroundColor: const Color(0xFF104C91), // Bluish AppBar
-        elevation: 2,
-        title: const Text(
-          "Notifications",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
-=======
-        title: Row(
-          children: [
-            Text(
-              'Notifications',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 28,
-              ),
-            ),
-          ],
-        ),
-        elevation: 2,
-        backgroundColor: Color(0xFF104C91),
-        leading: Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-              icon: Image.asset(
-                height: 28,
-                'assets/icons/menus.png',
-                color: Colors.white,
-              ),
-              onPressed: () {
-                Scaffold.of(context).openDrawer();
-              },
-            );
-          },
->>>>>>> a97f52e2f0349f0835df06f1cef83a2b3066a003
-        ),
-      ),
-<<<<<<< HEAD
+      backgroundColor: Color(0xFFF3F7FA), // Light blue background
       body: notifications.isEmpty
           ? const Center(
               child: Text(
@@ -165,16 +118,6 @@ class _NotificationPageState extends State<NotificationPage> {
                 return _buildNotificationCard(notification, index);
               },
             ),
-=======
-      backgroundColor: Color(0xFFF3F7FA),
-      body: ListView.builder(
-        itemCount: notifications.length,
-        itemBuilder: (context, index) {
-          final notification = notifications[index];
-          return _buildNotificationCard(notification, index);
-        },
-      ),
->>>>>>> a97f52e2f0349f0835df06f1cef83a2b3066a003
     );
   }
 
@@ -182,14 +125,8 @@ class _NotificationPageState extends State<NotificationPage> {
     final bool isSeen = notification['seen'];
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-<<<<<<< HEAD
       color: Colors.white, // Whitish background for notification card
       elevation: 2,
-=======
-      color: isSeen
-          ? Colors.grey[200]
-          : Colors.grey[300], // Light if seen, dark if unseen
->>>>>>> a97f52e2f0349f0835df06f1cef83a2b3066a003
       child: ListTile(
         leading: CircleAvatar(
           backgroundColor: isSeen ? Colors.grey[300] : Colors.grey[400],
@@ -271,7 +208,8 @@ class _NotificationPageState extends State<NotificationPage> {
                   },
                 ),
                 ListTile(
-                  leading: const Icon(Icons.notifications_off, color: Colors.black),
+                  leading:
+                      const Icon(Icons.notifications_off, color: Colors.black),
                   title: const Text(
                     "Turn off notifications",
                     style: TextStyle(color: Colors.black),

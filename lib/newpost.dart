@@ -119,32 +119,6 @@ class _NewPostPageState extends State<NewPostPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Create New Post',
-          style: TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-        elevation: 2,
-        backgroundColor: Color(0xFF104C91),
-        leading: Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-              icon: Image.asset(
-                height: 28,
-                'assets/icons/menus.png',
-                color: Colors.white,
-              ),
-              onPressed: () {
-                Scaffold.of(context).openDrawer();
-              },
-            );
-          },
-        ),
-      ),
       backgroundColor: const Color(0xFFF3F7FA),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
