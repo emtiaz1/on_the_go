@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:icons_plus/icons_plus.dart';
-import 'package:icons_plus/icons_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:intl/intl.dart'; // Import intl package
 
 class NewsFeedPage extends StatefulWidget {
   const NewsFeedPage({super.key});
@@ -24,21 +24,24 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
 
   Future<void> _loadPosts() async {
     try {
-      final userId = "currentUserId";
-
-      QuerySnapshot snapshot =
-          await FirebaseFirestore.instance.collection('posts').get();
+      // Fetch posts from Firestore and order by timestamp in descending order
+      QuerySnapshot snapshot = await FirebaseFirestore.instance
+          .collection('posts')
+          .orderBy('timestamp',
+              descending: true) // Order by timestamp (newest first)
+          .get();
 
       final List<Map<String, dynamic>> loadedPosts = [];
       for (var doc in snapshot.docs) {
         final data = doc.data() as Map<String, dynamic>;
         data['id'] = doc.id;
 
-        data['reactions'] = data['reactions'] ?? {
-          'like': 0,
-          'angry': 0,
-          'sad': 0,
-        };
+        data['reactions'] = data['reactions'] ??
+            {
+              'like': 0,
+              'angry': 0,
+              'sad': 0,
+            };
         data['content'] = data['content'] ?? 'No content available';
         data['image'] = data['image'] ?? '';
         data['location'] = data['location'] ?? 'Unknown Location';
@@ -46,6 +49,7 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
         data['user'] = data['user'] ?? 'Unknown User';
         data['views'] = data['views'] ?? 0;
         data['movement'] = data['movement'] ?? false;
+        data['timestamp'] = data['timestamp']; // Keep null if not available
 
         loadedPosts.add(data);
       }
@@ -76,7 +80,8 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
         throw Exception('Reaction type cannot be null or empty');
       }
 
-      if (currentReactionType != null && currentReactionType != newReactionType) {
+      if (currentReactionType != null &&
+          currentReactionType != newReactionType) {
         final previousCount = currentReactions[currentReactionType] ?? 0;
         await FirebaseFirestore.instance
             .collection('posts')
@@ -110,16 +115,15 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
 
   Future<void> _savePost(Map<String, dynamic> post) async {
     try {
-      // Replace with the actual user ID and email
       final userId = FirebaseAuth.instance.currentUser?.uid ?? 'unknown_user';
-      final userEmail = FirebaseAuth.instance.currentUser?.email ?? 'unknown_email';
+      final userEmail =
+          FirebaseAuth.instance.currentUser?.email ?? 'unknown_email';
 
       final savedPostRef = FirebaseFirestore.instance
           .collection('users')
           .doc(userId)
           .collection('saved_posts');
 
-      // Check if the post is already saved
       final existingPost = await savedPostRef.doc(post['id']).get();
       if (existingPost.exists) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -128,7 +132,6 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
         return;
       }
 
-      // Save the post
       await savedPostRef.doc(post['id']).set({
         'id': post['id'],
         'content': post['content'] ?? '',
@@ -139,7 +142,7 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
         'views': post['views'] ?? 0,
         'movement': post['movement'] ?? false,
         'savedAt': Timestamp.now(),
-        'savedBy': userEmail, // Add the user's email
+        'savedBy': userEmail,
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -178,6 +181,20 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
         children: posts.map((post) {
           final reactions = post['reactions'] ?? {};
           final userReaction = post['userReaction'];
+          final timestamp = post['timestamp'];
+
+          DateTime? postDate;
+
+          // Parse the timestamp if it's a String or Timestamp
+          if (timestamp is String) {
+            postDate = DateTime.tryParse(timestamp);
+          } else if (timestamp is Timestamp) {
+            postDate = timestamp.toDate();
+          }
+
+          final formattedTimestamp = postDate != null
+              ? DateFormat('MMM d, yyyy h:mm a').format(postDate)
+              : null;
 
           return Container(
             margin: const EdgeInsets.only(bottom: 20),
@@ -197,17 +214,29 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  /// Author & Location
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        post['user'],
-                        style: GoogleFonts.poppins(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.blueGrey[900],
-                        ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            post['user'],
+                            style: GoogleFonts.poppins(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.blueGrey[900],
+                            ),
+                          ),
+                          if (formattedTimestamp != null)
+                            Text(
+                              formattedTimestamp,
+                              style: GoogleFonts.poppins(
+                                fontSize: 12,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                        ],
                       ),
                       Text(
                         post['location'],
@@ -219,8 +248,6 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
                     ],
                   ),
                   const SizedBox(height: 10),
-
-                  /// Content
                   Text(
                     post['content'],
                     style: GoogleFonts.poppins(
@@ -229,19 +256,12 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
                     ),
                   ),
                   const SizedBox(height: 10),
-
-                  /// Image
                   if (post['image'].isNotEmpty)
                     ClipRRect(
                       borderRadius: BorderRadius.circular(12),
-                      child: Image.asset(
-                        post['image'],
-                        fit: BoxFit.cover,
-                      ),
+                      child: _buildImage(post['image']),
                     ),
                   const SizedBox(height: 10),
-
-                  /// Tags
                   if (post['tags'] != null && post['tags'].isNotEmpty)
                     Wrap(
                       spacing: 6.0,
@@ -257,51 +277,50 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
                           .toList(),
                     ),
                   const SizedBox(height: 10),
-
-                  /// Reactions & Views
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      /// Reactions
-                      Row(
-                        children: [
-                          IconButton(
-                            icon: Icon(
-                              IonIcons.alert_circle,
-                              color: userReaction == 'like'
-                                  ? Colors.redAccent
-                                  : Colors.grey,
+                      Expanded(
+                        child: Row(
+                          children: [
+                            IconButton(
+                              icon: Icon(
+                                IonIcons.alert_circle,
+                                color: userReaction == 'like'
+                                    ? Colors.redAccent
+                                    : Colors.grey,
+                              ),
+                              onPressed: () =>
+                                  _updateReaction(post['id'], 'like'),
                             ),
-                            onPressed: () => _updateReaction(post['id'], 'like'),
-                          ),
-                          Text('${reactions['like'] ?? 0}'),
-                          const SizedBox(width: 8),
-                          IconButton(
-                            icon: Icon(
-                              Icons.sentiment_satisfied_rounded,
-                              color: userReaction == 'angry'
-                                  ? Colors.blue
-                                  : Colors.grey,
+                            Text('${reactions['like'] ?? 0}'),
+                            const SizedBox(width: 8),
+                            IconButton(
+                              icon: Icon(
+                                Icons.sentiment_satisfied_rounded,
+                                color: userReaction == 'angry'
+                                    ? Colors.blue
+                                    : Colors.grey,
+                              ),
+                              onPressed: () =>
+                                  _updateReaction(post['id'], 'angry'),
                             ),
-                            onPressed: () =>
-                                _updateReaction(post['id'], 'angry'),
-                          ),
-                          Text('${reactions['angry'] ?? 0}'),
-                          const SizedBox(width: 8),
-                          IconButton(
-                            icon: Icon(
-                              Icons.sentiment_dissatisfied_rounded,
-                              color: userReaction == 'sad'
-                                  ? Colors.orangeAccent
-                                  : Colors.grey,
+                            Text('${reactions['angry'] ?? 0}'),
+                            const SizedBox(width: 8),
+                            IconButton(
+                              icon: Icon(
+                                Icons.sentiment_dissatisfied_rounded,
+                                color: userReaction == 'sad'
+                                    ? Colors.orangeAccent
+                                    : Colors.grey,
+                              ),
+                              onPressed: () =>
+                                  _updateReaction(post['id'], 'sad'),
                             ),
-                            onPressed: () => _updateReaction(post['id'], 'sad'),
-                          ),
-                          Text('${reactions['sad'] ?? 0}'),
-                        ],
+                            Text('${reactions['sad'] ?? 0}'),
+                          ],
+                        ),
                       ),
-
-                      /// Views
                       Row(
                         children: [
                           const Icon(Icons.remove_red_eye_outlined,
@@ -315,8 +334,6 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
                       ),
                     ],
                   ),
-
-                  /// Save Post Button
                   FutureBuilder<bool>(
                     future: _isPostSaved(post['id']),
                     builder: (context, snapshot) {
@@ -324,9 +341,7 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
                       return Align(
                         alignment: Alignment.centerRight,
                         child: TextButton.icon(
-                          onPressed: isSaved
-                              ? null // Disable the button if already saved
-                              : () => _savePost(post),
+                          onPressed: isSaved ? null : () => _savePost(post),
                           icon: Icon(
                             Icons.bookmark_add_outlined,
                             color: isSaved ? Colors.grey : Colors.blue,
@@ -341,8 +356,6 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
                       );
                     },
                   ),
-
-                  /// Movement alert
                   if (post['movement'] == true) ...[
                     const SizedBox(height: 6),
                     Text(
@@ -361,6 +374,28 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
         }).toList(),
       ),
     );
+  }
+
+  Widget _buildImage(String imageUrl) {
+    if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+      // Network image
+      return Image.network(
+        imageUrl,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          return const Icon(Icons.broken_image, size: 50, color: Colors.grey);
+        },
+      );
+    } else {
+      // Asset image
+      return Image.asset(
+        imageUrl,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          return const Icon(Icons.broken_image, size: 50, color: Colors.grey);
+        },
+      );
+    }
   }
 
   @override
