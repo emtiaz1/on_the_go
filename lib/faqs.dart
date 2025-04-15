@@ -50,7 +50,6 @@ class FaqsPage extends StatelessWidget {
         ),
         backgroundColor: const Color(0xFF104C91), // Blue background for AppBar
         elevation: 1,
-        centerTitle: true,
         iconTheme: const IconThemeData(color: Colors.white), // White icons
       ),
       body: Container(
