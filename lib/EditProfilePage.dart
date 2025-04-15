@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-<<<<<<< HEAD
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart'; // Add this import for date formatting
-=======
-import 'package:intl/intl.dart';
->>>>>>> 8afd4ef5e5a64a389f1a5395719389116c6fc7d1
 
 class EditProfilePage extends StatefulWidget {
   final String name;
@@ -181,7 +177,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-<<<<<<< HEAD
         leading: IconButton(
           icon: Image.asset(
             'assets/icons/back.png',
@@ -204,29 +199,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
       body: SingleChildScrollView(
         child: Container(
           padding: const EdgeInsets.all(16.0),
-=======
-        title: const Text('Edit Profile'),
-        foregroundColor: Colors.white,
-        backgroundColor: const Color(0xFF104C91),
-      ),
-      body: Container(
-        padding: const EdgeInsets.all(16.0),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.blue.shade50, Colors.blue.shade100],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
-        child: SingleChildScrollView(
->>>>>>> 8afd4ef5e5a64a389f1a5395719389116c6fc7d1
           child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 20),
-<<<<<<< HEAD
                 _buildTextField('Name', name, (value) => name = value),
                 _buildTextField('Email', email, (value) => email = value),
                 _buildTextField('Phone', phone, (value) => phone = value),
@@ -239,66 +217,25 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     'Institute', institute, (value) => institute = value),
                 const SizedBox(height: 20),
 
-=======
-                
-                // Name Field
-                _buildFieldContainer(
-                  child: _buildTextField('Name', name, (value) => name = value),
-                ),
-                
-                // Email Field
-                _buildFieldContainer(
-                  child: _buildTextField('Email', email, (value) => email = value),
-                ),
-                
-                // Phone Field
-                _buildFieldContainer(
-                  child: _buildTextField('Phone', phone, (value) => phone = value),
-                ),
-                
-                // Location Field
-                _buildFieldContainer(
-                  child: _buildTextField('Location', location, (value) => location = value),
-                ),
-                
-                // Bio Field
-                _buildFieldContainer(
-                  child: _buildTextField('Bio', bio, (value) => bio = value),
-                ),
-                
-                // Job Title Field
-                _buildFieldContainer(
-                  child: _buildTextField('Job Title', jobTitle, (value) => jobTitle = value),
-                ),
-                
-                // Institute Field
-                _buildFieldContainer(
-                  child: _buildTextField('Institute', institute, (value) => institute = value),
-                ),
-                
->>>>>>> 8afd4ef5e5a64a389f1a5395719389116c6fc7d1
                 // Gender Dropdown
-                _buildFieldContainer(
-                  child: _buildDropdown(
-                    'Gender',
-                    genderOptions,
-                    gender,
-                    (value) => setState(() => gender = value!),
-                  ),
+                _buildDropdown(
+                  'Gender',
+                  genderOptions,
+                  gender,
+                  (value) => setState(() => gender = value!),
                 ),
-                
+
                 // Blood Group Dropdown
-                _buildFieldContainer(
-                  child: _buildDropdown(
-                    'Blood Group',
-                    bloodGroupOptions,
-                    bloodGroup,
-                    (value) => setState(() => bloodGroup = value!),
-                  ),
+                _buildDropdown(
+                  'Blood Group',
+                  bloodGroupOptions,
+                  bloodGroup,
+                  (value) => setState(() => bloodGroup = value!),
                 ),
-                
+
                 // Birthday Picker
-                _buildFieldContainer(
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: GestureDetector(
                     onTap: () => _selectBirthday(context),
                     child: AbsorbPointer(
@@ -318,9 +255,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     ),
                   ),
                 ),
-                
+
                 const SizedBox(height: 30),
-                
+
                 // Save Button
                 SizedBox(
                   width: double.infinity,
@@ -332,12 +269,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF104C91),
-<<<<<<< HEAD
                       padding: const EdgeInsets.symmetric(
                           horizontal: 35, vertical: 15),
-=======
-                      padding: const EdgeInsets.symmetric(vertical: 16),
->>>>>>> 8afd4ef5e5a64a389f1a5395719389116c6fc7d1
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12.0),
                       ),
@@ -360,7 +293,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
-<<<<<<< HEAD
   Widget _buildTextField(
     String label,
     String initialValue,
@@ -387,27 +319,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
           ),
           filled: true,
           fillColor: Colors.white,
-=======
-  Widget _buildFieldContainer({required Widget child}) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      child: child,
-    );
-  }
-
-  Widget _buildTextField(String label, String initialValue, Function(String) onChanged) {
-    return TextFormField(
-      initialValue: initialValue,
-      decoration: InputDecoration(
-        labelText: label,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12.0),
->>>>>>> 8afd4ef5e5a64a389f1a5395719389116c6fc7d1
         ),
-        filled: true,
-        fillColor: Colors.white,
+        onChanged: onChanged,
       ),
-      onChanged: onChanged,
     );
   }
 
@@ -417,7 +331,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
     String selectedValue,
     Function(String?) onChanged,
   ) {
-<<<<<<< HEAD
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: DropdownButtonFormField<String>(
@@ -454,25 +367,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           color: Colors.black, // Text color inside the dropdown
           fontSize: 16,
         ),
-=======
-    return DropdownButtonFormField<String>(
-      value: selectedValue.isNotEmpty ? selectedValue : null,
-      decoration: InputDecoration(
-        labelText: label,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12.0),
-        ),
-        filled: true,
-        fillColor: Colors.white,
->>>>>>> 8afd4ef5e5a64a389f1a5395719389116c6fc7d1
       ),
-      items: options
-          .map((option) => DropdownMenuItem(
-                value: option,
-                child: Text(option),
-              ))
-          .toList(),
-      onChanged: onChanged,
     );
   }
 }
