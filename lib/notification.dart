@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:on_the_go_demo/utils/constans/colors.dart';
 
 class NotificationPage extends StatefulWidget {
   const NotificationPage({super.key});
@@ -67,25 +69,36 @@ class _NotificationPageState extends State<NotificationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 2,
-        title: Container(
-          height: 40,
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          decoration: BoxDecoration(
-            color: Colors.grey[200],
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: const TextField(
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              hintText: "Search notifications...",
-              icon: Icon(Icons.search, color: Colors.black),
+        title: Row(
+          children: [
+            Text(
+              'Notifications',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 28,
+              ),
             ),
-          ),
+          ],
         ),
-        centerTitle: true,
+        elevation: 2,
+        backgroundColor: Color(0xFF104C91),
+        leading: Builder(
+          builder: (BuildContext context) {
+            return IconButton(
+              icon: Image.asset(
+                height: 28,
+                'assets/icons/menus.png',
+                color: Colors.white,
+              ),
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+            );
+          },
+        ),
       ),
+      backgroundColor: Color(0xFFF3F7FA),
       body: ListView.builder(
         itemCount: notifications.length,
         itemBuilder: (context, index) {
@@ -100,7 +113,9 @@ class _NotificationPageState extends State<NotificationPage> {
     final bool isSeen = notification['seen'];
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      color: isSeen ? Colors.grey[200] : Colors.grey[300], // Light if seen, dark if unseen
+      color: isSeen
+          ? Colors.grey[200]
+          : Colors.grey[300], // Light if seen, dark if unseen
       child: ListTile(
         leading: CircleAvatar(
           backgroundColor: Colors.grey[400],
@@ -132,8 +147,8 @@ class _NotificationPageState extends State<NotificationPage> {
       builder: (context) {
         return SingleChildScrollView(
           child: Padding(
-            padding:
-                EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+            padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
