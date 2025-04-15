@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart'; // Firestore import
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart'; // Firebase Auth import
+import 'package:intl/intl.dart'; // For formatting the timestamp
 
 class NewPostPage extends StatefulWidget {
   const NewPostPage({super.key});
@@ -28,6 +29,26 @@ class _NewPostPageState extends State<NewPostPage> {
     super.dispose();
   }
 
+  Future<String?> _getLoggedInUserName() async {
+    try {
+      final String? userId = FirebaseAuth.instance.currentUser?.uid;
+      if (userId == null) return null;
+
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .get();
+
+      if (userDoc.exists) {
+        final userData = userDoc.data() as Map<String, dynamic>;
+        return userData['name'] ?? 'Anonymous';
+      }
+    } catch (e) {
+      debugPrint('Error fetching user name: $e');
+    }
+    return null;
+  }
+
   Future<void> _submitPost() async {
     if (_postController.text.isEmpty ||
         _imageLinkController.text.isEmpty ||
@@ -41,18 +62,20 @@ class _NewPostPageState extends State<NewPostPage> {
     }
 
     try {
-      // Get the current user
-      final User? user = FirebaseAuth.instance.currentUser;
+      // Get the current user's name from Firestore
+      final String? username = await _getLoggedInUserName();
 
-      if (user == null) {
+      if (username == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('User not logged in!')),
+          const SnackBar(
+              content: Text('User not logged in or name not found!')),
         );
         return;
       }
 
-      final String username =
-          user.displayName ?? 'Anonymous'; // Get username dynamically
+      // Format the current timestamp as a string
+      final String formattedTimestamp =
+          DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
 
       // Save post to Firestore
       await FirebaseFirestore.instance.collection('posts').add({
@@ -68,8 +91,8 @@ class _NewPostPageState extends State<NewPostPage> {
           'sad': 0,
         }, // Initialize all reactions to 0
         'views': 0, // Initialize views to 0
-        'timestamp': FieldValue.serverTimestamp(), // Add server timestamp
-        'user': username, // Save the dynamically collected username
+        'timestamp': formattedTimestamp, // Save timestamp as a string
+        'user': username, // Save the dynamically fetched username
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -98,7 +121,7 @@ class _NewPostPageState extends State<NewPostPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Create New Post'),
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.amber[900],
         actions: [
           TextButton(
             onPressed: _submitPost,

@@ -402,14 +402,6 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF3F7FA),
-      appBar: AppBar(
-        title: Text(
-          'NewsFeed',
-          style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
-        ),
-        backgroundColor: Colors.blueAccent,
-        elevation: 0,
-      ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : _buildNewsFeed(),

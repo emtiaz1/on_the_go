@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:lottie/lottie.dart';
 import 'package:on_the_go_demo/get_data_page.dart';
 import 'package:on_the_go_demo/utils/constans/colors.dart';
 import 'signup_page.dart';
@@ -17,9 +18,38 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController passwordController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   bool _isLoading = false;
-  bool _isPasswordVisible = false; // Track password visibility
+  bool _isPasswordVisible = false;
+  bool _isTermsAccepted = false; // Track terms and conditions checkbox
 
   void login() async {
+    if (!_isTermsAccepted) {
+      // Show a dialog if terms are not accepted
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Terms and Conditions'),
+            content: const Text(
+                'You must accept the terms and conditions to log in.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(); // Close the dialog
+                },
+                child: Text(
+                  'OK',
+                  style: TextStyle(
+                    color: Color(0xFF104C91),
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
+      );
+      return;
+    }
+
     setState(() {
       _isLoading = true;
     });
@@ -28,9 +58,8 @@ class _LoginPageState extends State<LoginPage> {
       String email = usernameController.text.trim();
       String password = passwordController.text.trim();
 
-      // Ensure email format (you might want to add more validation)
       if (!email.contains('@')) {
-        email = '$email@example.com'; // Adjust based on your needs
+        email = '$email@example.com';
       }
 
       await _auth.signInWithEmailAndPassword(
@@ -39,7 +68,6 @@ class _LoginPageState extends State<LoginPage> {
       );
 
       if (mounted) {
-        // Show a dialog with a circular loading indicator
         showDialog(
           context: context,
           barrierDismissible: false,
@@ -48,7 +76,7 @@ class _LoginPageState extends State<LoginPage> {
               content: Row(
                 children: [
                   const CircularProgressIndicator(
-                    color: Color(0xFFA52E45), // Brown color
+                    color: Color(0xFF104C91),
                   ),
                   const SizedBox(width: 20),
                   const Text(
@@ -61,9 +89,8 @@ class _LoginPageState extends State<LoginPage> {
           },
         );
 
-        // Dismiss the dialog after 2 seconds and navigate to the next page
         await Future.delayed(const Duration(seconds: 2));
-        Navigator.of(context).pop(); // Close the dialog
+        Navigator.of(context).pop();
 
         Navigator.pushReplacement(
           context,
@@ -96,9 +123,14 @@ class _LoginPageState extends State<LoginPage> {
               actions: [
                 TextButton(
                   onPressed: () {
-                    Navigator.of(context).pop(); // Close the dialog
+                    Navigator.of(context).pop();
                   },
-                  child: const Text('OK'),
+                  child: Text(
+                    'OK',
+                    style: TextStyle(
+                      color: Color(0xFF104C91),
+                    ),
+                  ),
                 ),
               ],
             );
@@ -116,9 +148,14 @@ class _LoginPageState extends State<LoginPage> {
               actions: [
                 TextButton(
                   onPressed: () {
-                    Navigator.of(context).pop(); // Close the dialog
+                    Navigator.of(context).pop();
                   },
-                  child: const Text('OK'),
+                  child: Text(
+                    'OK',
+                    style: TextStyle(
+                      color: Color(0xFF104C91),
+                    ),
+                  ),
                 ),
               ],
             );
@@ -145,6 +182,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        backgroundColor: Color(0xFFF3F7FA),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -159,11 +197,11 @@ class _LoginPageState extends State<LoginPage> {
                       fontSize: 45,
                       fontWeight: FontWeight.bold,
                       fontFamily: GoogleFonts.lobster().fontFamily,
-                      color: Colors.black,
+                      color: Color(0xFF104C91),
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  SizedBox(width: 10),
+                  const SizedBox(width: 10),
                   Text(
                     'Go',
                     style: TextStyle(
@@ -174,15 +212,21 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     textAlign: TextAlign.center,
                   ),
+                  const SizedBox(width: 10),
+                  Lottie.asset(
+                    'assets/animations/anim1.json',
+                    height: 60,
+                    width: 60,
+                  ),
                 ],
               ),
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
               Container(
                 height: 50,
                 decoration: BoxDecoration(
                   color: Colors.grey[300],
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Colors.black),
+                  border: Border.all(color: Color(0xFF104C91)),
                 ),
                 child: TextField(
                   controller: usernameController,
@@ -198,7 +242,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     border: InputBorder.none,
                     contentPadding: const EdgeInsets.symmetric(
-                        vertical: 15, horizontal: 10), // Adjusted padding
+                        vertical: 15, horizontal: 10),
                   ),
                 ),
               ),
@@ -208,12 +252,11 @@ class _LoginPageState extends State<LoginPage> {
                 decoration: BoxDecoration(
                   color: Colors.grey[300],
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Colors.black),
+                  border: Border.all(color: Color(0xFF104C91)),
                 ),
                 child: TextField(
                   controller: passwordController,
-                  obscureText:
-                      !_isPasswordVisible, // Toggle password visibility
+                  obscureText: !_isPasswordVisible,
                   decoration: InputDecoration(
                     prefixIcon: Icon(
                       Icons.lock,
@@ -223,7 +266,7 @@ class _LoginPageState extends State<LoginPage> {
                     hintStyle: TextStyle(color: Colors.grey[600]),
                     border: InputBorder.none,
                     contentPadding: const EdgeInsets.symmetric(
-                        vertical: 15, horizontal: 10), // Adjusted padding
+                        vertical: 15, horizontal: 10),
                     suffixIcon: IconButton(
                       icon: Icon(
                         _isPasswordVisible
@@ -240,18 +283,59 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  Checkbox(
+                    checkColor: Colors.white,
+                    activeColor: Color(0xFF104C91),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    side: BorderSide(color: Color(0xFF104C91)),
+                    value: _isTermsAccepted,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        _isTermsAccepted = value ?? false;
+                      });
+                    },
+                  ),
+                  Expanded(
+                    child: Row(
+                      children: [
+                        Text(
+                          'I accept the',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 16,
+                          ),
+                        ),
+                        SizedBox(width: 5),
+                        Text(
+                          'Terms and Conditions',
+                          style: TextStyle(
+                            color: Color(0xFF104C91),
+                            fontSize: 16,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
               ElevatedButton(
                 onPressed: _isLoading ? null : login,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF1E8AC0),
-                  padding: EdgeInsets.symmetric(horizontal: 35, vertical: 10),
+                  backgroundColor: Color(0xFF104C91),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 35, vertical: 10),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
                 child: _isLoading
-                    ? CircularProgressIndicator(color: Colors.white)
+                    ? const CircularProgressIndicator(color: Colors.white)
                     : Text(
                         'Log In',
                         style: TextStyle(
@@ -261,17 +345,29 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
               ),
-              SizedBox(height: 10),
-              TextButton(
-                onPressed: navigateToSignUp,
-                child: const Text(
-                  'Sign Up',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
+              const SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    "Don't have an account? ",
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.black,
+                    ),
                   ),
-                ),
+                  GestureDetector(
+                    onTap: navigateToSignUp,
+                    child: Text(
+                      'Sign Up',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF104C91),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
