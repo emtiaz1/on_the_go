@@ -19,66 +19,75 @@ class NotificationSettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF0D1117), // Dark bluish background
+      backgroundColor: Colors.lightBlue.shade50, // Light blue background
       appBar: AppBar(
-        title: Text('Notifications'),
-        backgroundColor: Color(0xFF1F6FEB), // Bright bluish AppBar
+        title: const Text(
+          'Notifications',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: const Color(0xFF104C91), // Bluish AppBar
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               "What notifications you receive",
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: Colors.lightBlueAccent,
+                color: Colors.black87, // Blackish text
               ),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
               "Facebook may still send you important notifications about your account and content outside of your preferred notification settings.",
-              style: TextStyle(color: Colors.grey[400]),
+              style: TextStyle(color: Colors.black54), // Blackish text
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Expanded(
               child: ListView.builder(
                 itemCount: items.length,
                 itemBuilder: (context, index) {
                   final item = items[index];
-                  return MouseRegion(
-                    cursor: SystemMouseCursors.click,
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => NotificationDetailScreen(
-                              title: item['title'],
-                            ),
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => NotificationDetailScreen(
+                            title: item['title'],
                           ),
-                        );
-                      },
-                      child: Card(
-                        color: Color(0xFF1E293B), // Dark bluish card
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
                         ),
-                        elevation: 4,
-                        child: ListTile(
-                          leading: Icon(item['icon'], color: Colors.lightBlue),
-                          title: Text(
-                            item['title'],
-                            style: TextStyle(color: Colors.white),
+                      );
+                    },
+                    child: Card(
+                      color: Colors.white, // Whitish card background
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 2,
+                      child: ListTile(
+                        leading: Icon(item['icon'], color: const Color(0xFF104C91)), // Bluish icon
+                        title: Text(
+                          item['title'],
+                          style: const TextStyle(
+                            color: Colors.black87, // Blackish text
+                            fontWeight: FontWeight.bold,
                           ),
-                          subtitle: Text(
-                            'Push, Email, SMS',
-                            style: TextStyle(color: Colors.blue[200]),
-                          ),
-                          trailing: Icon(Icons.arrow_forward_ios,
-                              size: 16, color: Colors.blueAccent),
+                        ),
+                        subtitle: const Text(
+                          'Push, Email, SMS',
+                          style: TextStyle(color: Colors.black54), // Blackish text
+                        ),
+                        trailing: const Icon(
+                          Icons.arrow_forward_ios,
+                          size: 16,
+                          color: Colors.black54, // Blackish icon
                         ),
                       ),
                     ),

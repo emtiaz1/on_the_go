@@ -1,8 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:on_the_go_demo/EditProfilePage.dart';
 import 'package:on_the_go_demo/login_page.dart';
+import 'package:on_the_go_demo/utils/constans/colors.dart';
 import 'package:video_player/video_player.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -35,7 +37,6 @@ class _UserPageState extends State<UserPage> {
   final List<String> posts = [
     'Avoid Mirpur 10 circle, protest is going on. Huge traffic here!',
     'Traffic update: Heavy traffic on Savar Birulia Road. Avoid if possible.',
-    'Fire on Gazipur Steelteck Factory!'
   ];
 
   final List<String> images = [
@@ -138,7 +139,10 @@ class _UserPageState extends State<UserPage> {
       ),
       child: Row(
         children: [
-          Icon(icon, color: Colors.blue.shade700, size: 30),
+          Icon(
+            icon,
+            color: Color(0xFF104C91),
+          ),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
@@ -168,14 +172,16 @@ class _UserPageState extends State<UserPage> {
     );
   }
 
-  Widget _buildClickableInfoCard(IconData icon, String title, String value, String url) {
+  Widget _buildClickableInfoCard(
+      IconData icon, String title, String value, String url) {
     return InkWell(
       onTap: () async {
         final uri = Uri.parse(url);
         if (await canLaunchUrl(uri)) {
           await launchUrl(
             uri,
-            mode: LaunchMode.externalApplication, // Ensures the URL opens in the browser
+            mode: LaunchMode
+                .externalApplication, // Ensures the URL opens in the browser
           );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -199,7 +205,7 @@ class _UserPageState extends State<UserPage> {
         ),
         child: Row(
           children: [
-            Icon(icon, color: Colors.blue, size: 30),
+            Icon(icon, color: Color(0xFF104C91), size: 30),
             const SizedBox(width: 16),
             Expanded(
               child: Column(
@@ -213,7 +219,7 @@ class _UserPageState extends State<UserPage> {
                   Text(
                     value,
                     style: const TextStyle(
-                      color: Colors.blue,
+                      color: Color(0xFF104C91),
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
                       decoration: TextDecoration.underline,
@@ -251,7 +257,7 @@ class _UserPageState extends State<UserPage> {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Colors.blue.shade700,
+              color: Color(0xFF104C91),
             ),
           ),
           const SizedBox(height: 10),
@@ -284,7 +290,7 @@ class _UserPageState extends State<UserPage> {
             Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Colors.blue.shade700, Colors.blue.shade400],
+                  colors: [Colors.blue.shade700, Color(0xFF104C91)],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                 ),
@@ -346,7 +352,7 @@ class _UserPageState extends State<UserPage> {
                       style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
-                        color: Colors.black87,
+                        color: Color(0xFF104C91),
                       ),
                     ),
                     ElevatedButton.icon(
@@ -378,8 +384,9 @@ class _UserPageState extends State<UserPage> {
                         style: TextStyle(color: Colors.white),
                       ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue.shade600,
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        backgroundColor: Color(0xFF104C91),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 8),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8.0),
                         ),
@@ -440,13 +447,13 @@ class _UserPageState extends State<UserPage> {
 
             // Tabs for Posts, Photos, Videos
             Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16.0),
+              margin: EdgeInsets.symmetric(horizontal: 16.0),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12.0),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.grey.withOpacity(0.2),
+                    color: Colors.grey,
                     blurRadius: 8.0,
                     offset: const Offset(0, 4),
                   ),
@@ -467,7 +474,7 @@ class _UserPageState extends State<UserPage> {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12.0),
                           color: selectedOption == option
-                              ? Colors.blue.shade700
+                              ? Color(0xFF104C91)
                               : Colors.transparent,
                         ),
                         child: Center(
@@ -571,7 +578,7 @@ class _UserPageState extends State<UserPage> {
                                   ListTile(
                                     leading: Icon(
                                       Icons.play_circle_fill,
-                                      color: Colors.blue.shade700,
+                                      color: Color(0xFF104C91),
                                       size: 40,
                                     ),
                                     title: Text(
@@ -592,7 +599,7 @@ class _UserPageState extends State<UserPage> {
                                     _videoController!,
                                     allowScrubbing: true,
                                     colors: VideoProgressColors(
-                                      playedColor: Colors.blue.shade700,
+                                      playedColor: Color(0xFF104C91),
                                     ),
                                   ),
                               ],

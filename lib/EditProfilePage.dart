@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart'; // Add this import for date formatting
 
 class EditProfilePage extends StatefulWidget {
@@ -48,7 +49,18 @@ class _EditProfilePageState extends State<EditProfilePage> {
   late String birthday;
 
   final List<String> genderOptions = ['Male', 'Female', 'Other'];
-  final List<String> bloodGroupOptions = ['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'];
+  final List<String> bloodGroupOptions = [
+    'A+',
+    'A-',
+    'B+',
+    'B-',
+    'O+',
+    'O-',
+    'AB+',
+    'AB-'
+  ];
+
+  late TextEditingController birthdayController; // Persistent controller
 
   @override
   void initState() {
@@ -63,6 +75,16 @@ class _EditProfilePageState extends State<EditProfilePage> {
     gender = widget.gender;
     bloodGroup = widget.bloodGroup;
     birthday = widget.birthday;
+
+    // Initialize the controller with the initial birthday value
+    birthdayController = TextEditingController(text: birthday);
+  }
+
+  @override
+  void dispose() {
+    // Dispose the controller to free resources
+    birthdayController.dispose();
+    super.dispose();
   }
 
   Future<void> _updateProfile() async {
@@ -83,14 +105,53 @@ class _EditProfilePageState extends State<EditProfilePage> {
         'birthday': birthday,
       });
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Profile updated successfully!')),
-      );
-      Navigator.pop(context);
+      // Show success alert dialog
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Success'),
+              content: const Text('Profile updated successfully!'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Close the dialog
+                    Navigator.pop(context); // Navigate back
+                  },
+                  child: Text(
+                    'OK',
+                    style: TextStyle(
+                      color: Color(0xFF104C91),
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error updating profile: $e')),
-      );
+      // Show error alert dialog
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Error'),
+              content: Text('Error updating profile: $e'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Close the dialog
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      }
     }
   }
 
@@ -107,6 +168,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     if (pickedDate != null) {
       setState(() {
         birthday = DateFormat('dd/MM/yyyy').format(pickedDate);
+        birthdayController.text = birthday; // Update the controller
       });
     }
   }
@@ -115,40 +177,44 @@ class _EditProfilePageState extends State<EditProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Profile'),
-        backgroundColor: Colors.blue.shade600,
+        leading: IconButton(
+          icon: Image.asset(
+            'assets/icons/back.png',
+            color: Colors.white,
+            height: 24,
+          ),
+          onPressed: () {
+            Navigator.pop(context); // Navigate back to the previous screen
+          },
+        ),
+        title: Text('Edit Profile',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 23,
+            )),
+        backgroundColor: const Color(0xFF104C91),
       ),
+      backgroundColor: const Color(0xFFF3F7FA),
       body: SingleChildScrollView(
         child: Container(
           padding: const EdgeInsets.all(16.0),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.blue.shade50, Colors.blue.shade100],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-            ),
-          ),
           child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Edit Your Profile',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blue,
-                  ),
-                ),
                 const SizedBox(height: 20),
                 _buildTextField('Name', name, (value) => name = value),
                 _buildTextField('Email', email, (value) => email = value),
                 _buildTextField('Phone', phone, (value) => phone = value),
-                _buildTextField('Location', location, (value) => location = value),
+                _buildTextField(
+                    'Location', location, (value) => location = value),
                 _buildTextField('Bio', bio, (value) => bio = value),
-                _buildTextField('Job Title', jobTitle, (value) => jobTitle = value),
-                _buildTextField('Institute', institute, (value) => institute = value),
+                _buildTextField(
+                    'Job Title', jobTitle, (value) => jobTitle = value),
+                _buildTextField(
+                    'Institute', institute, (value) => institute = value),
                 const SizedBox(height: 20),
 
                 // Gender Dropdown
@@ -181,15 +247,20 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           ),
                           filled: true,
                           fillColor: Colors.white,
+                          suffixIcon: const Icon(Icons.calendar_today),
                         ),
-                        controller: TextEditingController(text: birthday),
+                        controller:
+                            birthdayController, // Use persistent controller
                       ),
                     ),
                   ),
                 ),
 
                 const SizedBox(height: 30),
-                Center(
+
+                // Save Button
+                SizedBox(
+                  width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
@@ -197,8 +268,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue.shade600,
-                      padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                      backgroundColor: const Color(0xFF104C91),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 35, vertical: 15),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12.0),
                       ),
@@ -221,15 +293,29 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
-  Widget _buildTextField(String label, String initialValue, Function(String) onChanged) {
+  Widget _buildTextField(
+    String label,
+    String initialValue,
+    Function(String) onChanged,
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: TextFormField(
         initialValue: initialValue,
         decoration: InputDecoration(
           labelText: label,
+          labelStyle: const TextStyle(
+            color: Color(0xFF104C91), // Custom color for label
+          ),
           border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.0), // Rounded edges
+          ),
+          focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12.0),
+            borderSide: const BorderSide(
+              color: Color(0xFF104C91), // Custom color for focused border
+              width: 2.0,
+            ),
           ),
           filled: true,
           fillColor: Colors.white,
@@ -252,18 +338,35 @@ class _EditProfilePageState extends State<EditProfilePage> {
         decoration: InputDecoration(
           labelText: label,
           border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.0), // Rounded edges
+          ),
+          focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12.0),
+            borderSide: const BorderSide(
+              color: Color(0xFF104C91), // Custom color for focused border
+              width: 2.0,
+            ),
           ),
           filled: true,
           fillColor: Colors.white,
         ),
+        dropdownColor: Colors.white, // Background color of the dropdown
+        icon: const Icon(Icons.arrow_drop_down,
+            color: Color(0xFF104C91)), // Dropdown icon color
         items: options
             .map((option) => DropdownMenuItem(
                   value: option,
-                  child: Text(option),
+                  child: Text(
+                    option,
+                    style: const TextStyle(color: Colors.black), // Text color
+                  ),
                 ))
             .toList(),
         onChanged: onChanged,
+        style: const TextStyle(
+          color: Colors.black, // Text color inside the dropdown
+          fontSize: 16,
+        ),
       ),
     );
   }

@@ -219,7 +219,6 @@ class _SignUpPageState extends State<SignUpPage> {
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
                   color: Color(0xFF104C91),
-                  fontFamily: GoogleFonts.openSans().fontFamily,
                 ),
                 textAlign: TextAlign.center,
               ),

@@ -119,20 +119,7 @@ class _NewPostPageState extends State<NewPostPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Create New Post'),
-        backgroundColor: Colors.amber[900],
-        actions: [
-          TextButton(
-            onPressed: _submitPost,
-            child: const Text(
-              'Post',
-              style:
-                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-            ),
-          ),
-        ],
-      ),
+      backgroundColor: const Color(0xFFF3F7FA),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -280,6 +267,7 @@ class _NewPostPageState extends State<NewPostPage> {
                 ),
                 Switch(
                   value: _isMovementEnabled,
+                  activeColor: Colors.red[600],
                   onChanged: (value) {
                     setState(() {
                       _isMovementEnabled = value;
