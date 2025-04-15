@@ -36,29 +36,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          children: [
-            Text(
-              'On the',
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                fontFamily: GoogleFonts.lobster().fontFamily,
-                color: Colors.white,
-              ),
-            ),
-            const SizedBox(width: 6),
-            Text(
-              'Go',
-              style: TextStyle(
-                fontSize: 30,
-                fontWeight: FontWeight.bold,
-                fontFamily: GoogleFonts.lobster().fontFamily,
-                color: OColors.lightRed,
-              ),
-            ),
-          ],
-        ),
+        title: _getAppBarTitle(),
         elevation: 2,
         backgroundColor: Color(0xFF104C91),
         leading: Builder(
@@ -139,6 +117,57 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+
+  Widget _getAppBarTitle() {
+    if (_currentIndex == 2) {
+      // Normal font style for Create Post
+      return const Text(
+        'Create New Post',
+        style: TextStyle(
+          fontSize: 28,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+      );
+    } else if (_currentIndex == 3) {
+      // Normal font style for Notification
+      return const Text(
+        'Notification',
+        style: TextStyle(
+          fontSize: 28,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+      );
+    } else {
+      // Stylized font for "On the Go"
+      TextStyle titleStyle = TextStyle(
+        fontSize: 28,
+        fontWeight: FontWeight.bold,
+        fontFamily: GoogleFonts.lobster().fontFamily,
+        color: Colors.white,
+      );
+
+      return Row(
+        children: [
+          Text(
+            'On the',
+            style: titleStyle,
+          ),
+          const SizedBox(width: 6),
+          Text(
+            'Go',
+            style: TextStyle(
+              fontSize: 30,
+              fontWeight: FontWeight.bold,
+              fontFamily: GoogleFonts.lobster().fontFamily,
+              color: OColors.lightRed,
+            ),
+          ),
+        ],
+      );
+    }
   }
 
   Widget _buildBottomNavItem({
