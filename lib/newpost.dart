@@ -121,7 +121,7 @@ class _NewPostPageState extends State<NewPostPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Create New Post'),
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.amber[900],
         actions: [
           TextButton(
             onPressed: _submitPost,

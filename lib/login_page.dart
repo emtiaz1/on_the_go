@@ -36,7 +36,12 @@ class _LoginPageState extends State<LoginPage> {
                 onPressed: () {
                   Navigator.of(context).pop(); // Close the dialog
                 },
-                child: const Text('OK'),
+                child: Text(
+                  'OK',
+                  style: TextStyle(
+                    color: Color(0xFF104C91),
+                  ),
+                ),
               ),
             ],
           );
@@ -71,7 +76,7 @@ class _LoginPageState extends State<LoginPage> {
               content: Row(
                 children: [
                   const CircularProgressIndicator(
-                    color: Color(0xFFA52E45),
+                    color: Color(0xFF104C91),
                   ),
                   const SizedBox(width: 20),
                   const Text(
@@ -120,7 +125,12 @@ class _LoginPageState extends State<LoginPage> {
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: const Text('OK'),
+                  child: Text(
+                    'OK',
+                    style: TextStyle(
+                      color: Color(0xFF104C91),
+                    ),
+                  ),
                 ),
               ],
             );
@@ -140,7 +150,12 @@ class _LoginPageState extends State<LoginPage> {
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: const Text('OK'),
+                  child: Text(
+                    'OK',
+                    style: TextStyle(
+                      color: Color(0xFF104C91),
+                    ),
+                  ),
                 ),
               ],
             );
@@ -167,7 +182,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: const Color(0xFF140100),
+        backgroundColor: Color(0xFFF3F7FA),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -182,7 +197,7 @@ class _LoginPageState extends State<LoginPage> {
                       fontSize: 45,
                       fontWeight: FontWeight.bold,
                       fontFamily: GoogleFonts.lobster().fontFamily,
-                      color: Colors.amber[800],
+                      color: Color(0xFF104C91),
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -211,7 +226,7 @@ class _LoginPageState extends State<LoginPage> {
                 decoration: BoxDecoration(
                   color: Colors.grey[300],
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Colors.black),
+                  border: Border.all(color: Color(0xFF104C91)),
                 ),
                 child: TextField(
                   controller: usernameController,
@@ -237,7 +252,7 @@ class _LoginPageState extends State<LoginPage> {
                 decoration: BoxDecoration(
                   color: Colors.grey[300],
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Colors.black),
+                  border: Border.all(color: Color(0xFF104C91)),
                 ),
                 child: TextField(
                   controller: passwordController,
@@ -273,11 +288,11 @@ class _LoginPageState extends State<LoginPage> {
                 children: [
                   Checkbox(
                     checkColor: Colors.white,
-                    activeColor: Colors.amber[800],
+                    activeColor: Color(0xFF104C91),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(5),
                     ),
-                    side: BorderSide(color: Colors.white),
+                    side: BorderSide(color: Color(0xFF104C91)),
                     value: _isTermsAccepted,
                     onChanged: (bool? value) {
                       setState(() {
@@ -291,7 +306,7 @@ class _LoginPageState extends State<LoginPage> {
                         Text(
                           'I accept the',
                           style: TextStyle(
-                            color: Colors.white,
+                            color: Colors.black,
                             fontSize: 16,
                           ),
                         ),
@@ -299,7 +314,7 @@ class _LoginPageState extends State<LoginPage> {
                         Text(
                           'Terms and Conditions',
                           style: TextStyle(
-                            color: Colors.amber[800],
+                            color: Color(0xFF104C91),
                             fontSize: 16,
                           ),
                         ),
@@ -312,7 +327,7 @@ class _LoginPageState extends State<LoginPage> {
               ElevatedButton(
                 onPressed: _isLoading ? null : login,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.amber[800],
+                  backgroundColor: Color(0xFF104C91),
                   padding:
                       const EdgeInsets.symmetric(horizontal: 35, vertical: 10),
                   shape: RoundedRectangleBorder(
@@ -338,7 +353,7 @@ class _LoginPageState extends State<LoginPage> {
                     "Don't have an account? ",
                     style: TextStyle(
                       fontSize: 16,
-                      color: Colors.white,
+                      color: Colors.black,
                     ),
                   ),
                   GestureDetector(
@@ -348,7 +363,7 @@ class _LoginPageState extends State<LoginPage> {
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: Colors.amber[800],
+                        color: Color(0xFF104C91),
                       ),
                     ),
                   ),
