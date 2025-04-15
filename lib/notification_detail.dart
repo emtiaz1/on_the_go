@@ -44,7 +44,6 @@ class _NotificationDetailScreenState extends State<NotificationDetailScreen> {
                 children: [
                   CircleAvatar(
                     radius: 20,
-                    backgroundImage: AssetImage('assets/user.png'), // Replace with your asset
                   ),
                   SizedBox(width: 12),
                   Expanded(

@@ -148,10 +148,12 @@ class _SettingsPageState extends State<SettingsPage> {
             ? TextField(
                 controller: _searchController,
                 autofocus: true,
-                style: const TextStyle(color: Colors.white),
+                style: const TextStyle(
+                  color: Colors.white,
+                ),
                 decoration: InputDecoration(
                   hintText: 'Search',
-                  hintStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
+                  hintStyle: TextStyle(color: Colors.white),
                   border: InputBorder.none,
                 ),
                 cursorColor: Colors.white,
@@ -160,22 +162,19 @@ class _SettingsPageState extends State<SettingsPage> {
                 'Settings',
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-        backgroundColor: Colors.lightBlue.shade700,
+        backgroundColor: Color(0xFF104C91),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: Image.asset(
+            'assets/icons/back.png',
+            color: Colors.white,
+            height: 24,
+          ),
           onPressed: () {
-            if (_isSearching) {
-              setState(() {
-                _isSearching = false;
-                _searchController.clear();
-              });
-            } else {
-              Navigator.pop(context);
-            }
+            Navigator.pop(context);
           },
         ),
         actions: [
@@ -194,7 +193,7 @@ class _SettingsPageState extends State<SettingsPage> {
         ],
         elevation: 0,
       ),
-      backgroundColor: Colors.lightBlue.shade50,
+      backgroundColor: Color(0xFFF3F7FA),
       body: ListView.builder(
         padding: const EdgeInsets.symmetric(vertical: 8),
         itemCount: _filteredSettingsItems.length,
@@ -206,9 +205,7 @@ class _SettingsPageState extends State<SettingsPage> {
             title: item['title'],
             subtitle: item['subtitle'],
             color: item['color'],
-            onTap: item['onTap'] != null
-                ? () => item['onTap'](context)
-                : null,
+            onTap: item['onTap'] != null ? () => item['onTap'](context) : null,
           );
         },
       ),
