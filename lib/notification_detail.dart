@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class NotificationDetailScreen extends StatefulWidget {
   final String title;
 
-  NotificationDetailScreen({required this.title});
+  const NotificationDetailScreen({required this.title, super.key});
 
   @override
   State<NotificationDetailScreen> createState() =>
@@ -19,76 +19,129 @@ class _NotificationDetailScreenState extends State<NotificationDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF0D1117), // Dark bluish background
+      backgroundColor: const Color(0xFFF3F7FA), // Light blue background
       appBar: AppBar(
-        title: Text(widget.title),
-        backgroundColor: Color(0xFF1F6FEB), // Blue AppBar
+        leading: IconButton(
+          icon: Image.asset(
+            'assets/icons/back.png',
+            color: Colors.white,
+            height: 24,
+          ),
+          onPressed: () {
+            Navigator.pop(context); // Navigate back to the previous screen
+          },
+        ),
+        title: Text(
+          widget.title,
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 24,
+          ),
+        ),
+        backgroundColor: const Color(0xFF104C91), // Blue AppBar
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               "These are notifications to remind you of updates you may have missed. Here's an example.",
-              style: TextStyle(color: Colors.grey[400]),
+              style: TextStyle(
+                color: Colors.black54, // Blackish text
+                fontSize: 14,
+              ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Container(
-              padding: EdgeInsets.all(12),
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Color(0xFF1E293B), // Dark bluish container
+                color: Colors.white, // Whitish container
                 borderRadius: BorderRadius.circular(8),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.2),
+                    blurRadius: 5,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
               ),
               child: Row(
                 children: [
-                  CircleAvatar(
+                  const CircleAvatar(
                     radius: 20,
+                    backgroundColor: Colors.grey,
                   ),
-                  SizedBox(width: 12),
-                  Expanded(
+                  const SizedBox(width: 12),
+                  const Expanded(
                     child: Text(
                       "You have 3 new notifications, 1 Timeline post and 1 group update.",
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(
+                        color: Colors.black87, // Blackish text
+                        fontSize: 14,
+                      ),
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
             SwitchListTile(
               value: allowFacebook,
               onChanged: (val) => setState(() => allowFacebook = val),
-              title: Text(
-                "Allow notifications on Facebook",
-                style: TextStyle(color: Colors.white),
+              title: const Text(
+                "Allow notifications",
+                style: TextStyle(
+                  color: Colors.black87, // Blackish text
+                  fontSize: 16,
+                ),
               ),
               activeColor: Colors.lightBlueAccent,
             ),
-            Divider(height: 32, color: Colors.blueGrey),
-            Text(
+            const Divider(height: 32, color: Colors.grey),
+            const Text(
               "Where you receive these notifications",
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                color: Colors.lightBlueAccent,
+                color: Colors.black87, // Blackish text
+                fontSize: 16,
               ),
             ),
             SwitchListTile(
               value: push,
               onChanged: (val) => setState(() => push = val),
-              title: Text("Push", style: TextStyle(color: Colors.white)),
+              title: const Text(
+                "Push",
+                style: TextStyle(
+                  color: Colors.black87, // Blackish text
+                  fontSize: 16,
+                ),
+              ),
               activeColor: Colors.lightBlueAccent,
             ),
             SwitchListTile(
               value: email,
               onChanged: (val) => setState(() => email = val),
-              title: Text("Email", style: TextStyle(color: Colors.white)),
+              title: const Text(
+                "Email",
+                style: TextStyle(
+                  color: Colors.black87, // Blackish text
+                  fontSize: 16,
+                ),
+              ),
               activeColor: Colors.lightBlueAccent,
             ),
             SwitchListTile(
               value: sms,
               onChanged: (val) => setState(() => sms = val),
-              title: Text("SMS", style: TextStyle(color: Colors.white)),
+              title: const Text(
+                "SMS",
+                style: TextStyle(
+                  color: Colors.black87, // Blackish text
+                  fontSize: 16,
+                ),
+              ),
               activeColor: Colors.lightBlueAccent,
             ),
           ],
