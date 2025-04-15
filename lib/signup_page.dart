@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -74,7 +75,12 @@ class _SignUpPageState extends State<SignUpPage> {
                         'password': password
                       }); // Navigate back to login
                     },
-                    child: const Text('OK'),
+                    child: Text(
+                      'OK',
+                      style: TextStyle(
+                        color: Color(0xFF104C91),
+                      ),
+                    ),
                   ),
                 ],
               );
@@ -110,7 +116,12 @@ class _SignUpPageState extends State<SignUpPage> {
                     onPressed: () {
                       Navigator.of(context).pop(); // Close the dialog
                     },
-                    child: const Text('OK'),
+                    child: Text(
+                      'OK',
+                      style: TextStyle(
+                        color: Color(0xFF104C91),
+                      ),
+                    ),
                   ),
                 ],
               );
@@ -139,7 +150,12 @@ class _SignUpPageState extends State<SignUpPage> {
                 onPressed: () {
                   Navigator.of(context).pop(); // Close the dialog
                 },
-                child: const Text('OK'),
+                child: Text(
+                  'OK',
+                  style: TextStyle(
+                    color: Color(0xFF104C91),
+                  ),
+                ),
               ),
             ],
           );
@@ -160,7 +176,9 @@ class _SignUpPageState extends State<SignUpPage> {
           decoration: BoxDecoration(
             color: Colors.grey[200],
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: Colors.blue),
+            border: Border.all(
+              color: Color(0xFF104C91),
+            ),
           ),
           child: TextField(
             controller: controller,
@@ -187,6 +205,7 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFFF3F7FA),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -194,12 +213,13 @@ class _SignUpPageState extends State<SignUpPage> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               const SizedBox(height: 150),
-              const Text(
+              Text(
                 'Sign Up',
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black,
+                  color: Color(0xFF104C91),
+                  fontFamily: GoogleFonts.openSans().fontFamily,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -225,7 +245,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   : ElevatedButton(
                       onPressed: signUp,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
+                        backgroundColor: Color(0xFF104C91),
                         padding: const EdgeInsets.symmetric(
                             horizontal: 50, vertical: 15),
                         shape: RoundedRectangleBorder(
@@ -258,7 +278,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     child: const Text(
                       'Login',
                       style: TextStyle(
-                        color: Colors.blue,
+                        color: Color(0xFF104C91),
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
                       ),

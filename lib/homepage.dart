@@ -66,7 +66,7 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
         elevation: 2,
-        backgroundColor: const Color(0xFF104C91),
+        backgroundColor: Color(0xFF104C91),
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(
@@ -221,16 +221,15 @@ class _HomePageState extends State<HomePage> {
       ),
       body: _pages[_currentIndex],
       bottomNavigationBar: BottomAppBar(
-        shape: const CircularNotchedRectangle(),
-        notchMargin: 8.0,
+        shape:
+            const CircularNotchedRectangle(), // Use CircularNotchedRectangle for the shape
+        elevation: 10, // Floating effect
         child: Container(
           height: 70,
           decoration: const BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
-            ),
+            borderRadius:
+                BorderRadius.all(Radius.circular(30)), // Fully rounded corners
             boxShadow: [
               BoxShadow(
                 color: Colors.black12,
@@ -299,7 +298,7 @@ class _HomePageState extends State<HomePage> {
         children: [
           Icon(
             icon,
-            color: isSelected ? const Color(0xFFA52E45) : Colors.black87,
+            color: isSelected ? Color(0xFF104C91) : Colors.black87,
             size: size, // Use the size parameter
           ),
           const SizedBox(height: 4),
@@ -308,7 +307,7 @@ class _HomePageState extends State<HomePage> {
               width: 6,
               height: 6,
               decoration: const BoxDecoration(
-                color: Color(0xFFA52E45),
+                color: Color(0xFF104C91),
                 shape: BoxShape.circle,
               ),
             ),
