@@ -3,6 +3,7 @@ import 'NotificationSettings.dart';
 import 'data_and_storage.dart';
 import 'privacy_page.dart';
 import 'account_page.dart';
+import 'media.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -51,10 +52,18 @@ class _SettingsPageState extends State<SettingsPage> {
       'color': Colors.blue,
     },
     {
-      'icon': Icons.list_alt,
-      'title': 'Lists',
-      'subtitle': 'Manage people and groups',
+      'icon': Icons.perm_media,
+      'title': 'Media',
+      'subtitle': 'Manage your media files',
       'color': Colors.orange,
+      'onTap': (BuildContext context) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const MediaPage(),
+          ),
+        );
+      },
     },
     {
       'icon': Icons.chat,
