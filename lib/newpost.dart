@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart'; // Firestore import
-import 'package:firebase_auth/firebase_auth.dart'; // Firebase Auth import
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_fonts/google_fonts.dart'; // Firebase Auth import
 
 class NewPostPage extends StatefulWidget {
   const NewPostPage({super.key});
@@ -67,7 +68,7 @@ class _NewPostPageState extends State<NewPostPage> {
           'sad': 0,
         }, // Initialize all reactions to 0
         'views': 0, // Initialize views to 0
-        'timestamp': FieldValue.serverTimestamp(),
+        'timestamp': FieldValue.serverTimestamp(), // Add server timestamp
         'user': username, // Save the dynamically collected username
       });
 
@@ -243,16 +244,14 @@ class _NewPostPageState extends State<NewPostPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Row(
-                  children: const [
-                    Icon(Icons.directions_walk,
-                        color: Colors.red), // Movement icon
-                    SizedBox(width: 8),
+                  children: [
                     Text(
-                      'Movement:',
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white70),
+                      '🚨 Movement Alert',
+                      style: GoogleFonts.poppins(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.redAccent,
+                      ),
                     ),
                   ],
                 ),
