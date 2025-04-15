@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'NotificationSettings.dart';
+import 'data_and_storage.dart';
+import 'privacy_page.dart';
+import 'account_page.dart';
+import 'media.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -18,12 +22,28 @@ class _SettingsPageState extends State<SettingsPage> {
       'title': 'Account',
       'subtitle': 'Security notifications, change number',
       'color': Colors.red,
+      'onTap': (BuildContext context) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const AccountPage(),
+          ),
+        );
+      },
     },
     {
       'icon': Icons.lock,
       'title': 'Privacy',
-      'subtitle': 'Block contacts, disappearing messages',
+      'subtitle': 'Audience, Visibility, read receipts',
       'color': Colors.green,
+      'onTap': (BuildContext context) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const PrivacyPage(),
+          ),
+        );
+      },
     },
     {
       'icon': Icons.account_circle,
@@ -32,10 +52,18 @@ class _SettingsPageState extends State<SettingsPage> {
       'color': Colors.blue,
     },
     {
-      'icon': Icons.list_alt,
-      'title': 'Lists',
-      'subtitle': 'Manage people and groups',
+      'icon': Icons.perm_media,
+      'title': 'Media',
+      'subtitle': 'Manage your media files',
       'color': Colors.orange,
+      'onTap': (BuildContext context) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const MediaPage(),
+          ),
+        );
+      },
     },
     {
       'icon': Icons.chat,
@@ -62,6 +90,14 @@ class _SettingsPageState extends State<SettingsPage> {
       'title': 'Storage and data',
       'subtitle': 'Network usage, auto-download',
       'color': Colors.brown,
+      'onTap': (BuildContext context) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const StoragePage(),
+          ),
+        );
+      },
     },
     {
       'icon': Icons.language,

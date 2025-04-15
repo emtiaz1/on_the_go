@@ -57,8 +57,30 @@ class _SignUpPageState extends State<SignUpPage> {
           'createdAt': FieldValue.serverTimestamp(),
         });
 
-        // Navigate back with user data
-        Navigator.pop(context, {'email': email, 'password': password});
+        // Show success dialog
+        if (mounted) {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text('Success'),
+                content: const Text('Account created successfully!'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(); // Close the dialog
+                      Navigator.pop(context, {
+                        'email': email,
+                        'password': password
+                      }); // Navigate back to login
+                    },
+                    child: const Text('OK'),
+                  ),
+                ],
+              );
+            },
+          );
+        }
       } on FirebaseAuthException catch (e) {
         setState(() {
           showError = true;
@@ -75,9 +97,26 @@ class _SignUpPageState extends State<SignUpPage> {
           errorMessage = 'An error occurred. Please try again.';
         }
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(errorMessage)),
-        );
+        // Show error dialog
+        if (mounted) {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text('Error'),
+                content: Text(errorMessage),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(); // Close the dialog
+                    },
+                    child: const Text('OK'),
+                  ),
+                ],
+              );
+            },
+          );
+        }
       } finally {
         setState(() {
           isLoading = false;
@@ -87,8 +126,24 @@ class _SignUpPageState extends State<SignUpPage> {
       setState(() {
         showError = true;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill in all required fields')),
+
+      // Show error dialog for empty fields
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Error'),
+            content: const Text('Please fill in all required fields.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(); // Close the dialog
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
       );
     }
   }
@@ -144,6 +199,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
+                  color: Colors.black,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -179,7 +235,9 @@ class _SignUpPageState extends State<SignUpPage> {
                       child: const Text(
                         'Sign Up',
                         style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white),
                       ),
                     ),
               const SizedBox(height: 20),
