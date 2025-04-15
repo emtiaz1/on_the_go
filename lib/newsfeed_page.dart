@@ -3,7 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:intl/intl.dart'; // Import intl package
+import 'package:intl/intl.dart';
+import 'package:on_the_go_demo/utils/constans/colors.dart'; // Import intl package
 
 class NewsFeedPage extends StatefulWidget {
   const NewsFeedPage({super.key});
@@ -27,8 +28,7 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
       // Fetch posts from Firestore and order by timestamp in descending order
       QuerySnapshot snapshot = await FirebaseFirestore.instance
           .collection('posts')
-          .orderBy('timestamp',
-              descending: true) // Order by timestamp (newest first)
+          .orderBy('timestamp', descending: true)
           .get();
 
       final List<Map<String, dynamic>> loadedPosts = [];
@@ -54,17 +54,23 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
         loadedPosts.add(data);
       }
 
-      setState(() {
-        posts = loadedPosts;
-        isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          posts = loadedPosts;
+          isLoading = false;
+        });
+      }
     } catch (e) {
-      setState(() {
-        isLoading = false;
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error loading posts: $e')),
-      );
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error loading posts: $e')),
+        );
+      }
     }
   }
 
@@ -401,6 +407,47 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Row(
+          children: [
+            Text(
+              'On the',
+              style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+                fontFamily: GoogleFonts.lobster().fontFamily,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(width: 6),
+            Text(
+              'Go',
+              style: TextStyle(
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
+                fontFamily: GoogleFonts.lobster().fontFamily,
+                color: OColors.lightRed,
+              ),
+            ),
+          ],
+        ),
+        elevation: 2,
+        backgroundColor: Color(0xFF104C91),
+        leading: Builder(
+          builder: (BuildContext context) {
+            return IconButton(
+              icon: Image.asset(
+                height: 28,
+                'assets/icons/menus.png',
+                color: Colors.white,
+              ),
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+            );
+          },
+        ),
+      ),
       backgroundColor: const Color(0xFFF3F7FA),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
