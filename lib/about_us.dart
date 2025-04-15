@@ -7,11 +7,22 @@ class AboutUsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: Image.asset(
+            'assets/icons/back.png',
+            color: Colors.white,
+            height: 24,
+          ),
+          onPressed: () {
+            Navigator.pop(context); // Navigate back to the previous screen
+          },
+        ),
         title: const Text(
           'About Us',
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            fontSize: 20,
+            fontSize: 24,
+            color: Colors.white, // White text for contrast
           ),
         ),
         backgroundColor: const Color(0xFF104C91), // Blue background for AppBar
