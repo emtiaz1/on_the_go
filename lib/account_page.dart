@@ -14,8 +14,8 @@ class _AccountPageState extends State<AccountPage> {
 
   @override
   Widget build(BuildContext context) {
-    Color primaryRed = const Color(0xFFD32F2F);
-    Color background = const Color(0xFFFFF5F5);
+    Color primaryRed = const Color(0xFF104C91);
+    Color background = const Color(0xFFF3F7FA);
 
     return Scaffold(
       backgroundColor: background,
@@ -24,14 +24,20 @@ class _AccountPageState extends State<AccountPage> {
           'Account Settings',
           style: TextStyle(
             color: Colors.white,
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
           ),
         ),
         backgroundColor: primaryRed,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
+          icon: Image.asset(
+            'assets/icons/back.png',
+            color: Colors.white,
+            height: 24,
+          ),
+          onPressed: () {
+            Navigator.pop(context); // Navigate back to the previous screen
+          },
         ),
       ),
       body: ListView(
@@ -46,7 +52,8 @@ class _AccountPageState extends State<AccountPage> {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => const TwoStepVerificationPage()),
+                MaterialPageRoute(
+                    builder: (_) => const TwoStepVerificationPage()),
               );
             },
           ),
@@ -102,7 +109,7 @@ class _AccountPageState extends State<AccountPage> {
           _settingsTile(
             icon: Icons.privacy_tip,
             title: "Privacy Summary",
-            subtitle: "See what info you’ve shared",
+            subtitle: "See what info you've shared",
             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
             onTap: () {},
           ),
@@ -123,6 +130,7 @@ class _AccountPageState extends State<AccountPage> {
             subtitleColor: Colors.red.shade300,
             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
             onTap: () => _showDeleteDialog(context),
+            iconColor: Colors.red, // Add this parameter to specify icon color
           ),
         ],
       ),
@@ -137,6 +145,7 @@ class _AccountPageState extends State<AccountPage> {
     void Function()? onTap,
     Color? titleColor,
     Color? subtitleColor,
+    Color? iconColor, // Add this parameter
   }) {
     return GestureDetector(
       onTap: onTap,
@@ -156,7 +165,9 @@ class _AccountPageState extends State<AccountPage> {
         ),
         child: Row(
           children: [
-            Icon(icon, color: Colors.red.shade700, size: 26),
+            Icon(icon,
+                color: iconColor ?? Color(0xFF104C91),
+                size: 26), // Use iconColor if provided
             const SizedBox(width: 16),
             Expanded(
               child: Column(
@@ -208,7 +219,7 @@ class _AccountPageState extends State<AccountPage> {
       ),
       child: Row(
         children: [
-          Icon(icon, color: Colors.red.shade700, size: 26),
+          Icon(icon, color: Color(0xFF104C91), size: 26),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
@@ -219,8 +230,8 @@ class _AccountPageState extends State<AccountPage> {
                         fontSize: 15, fontWeight: FontWeight.w600)),
                 const SizedBox(height: 3),
                 Text(subtitle,
-                    style: TextStyle(
-                        fontSize: 13, color: Colors.grey.shade600)),
+                    style:
+                        TextStyle(fontSize: 13, color: Colors.grey.shade600)),
               ],
             ),
           ),
@@ -233,7 +244,12 @@ class _AccountPageState extends State<AccountPage> {
               shape: BoxShape.circle,
             ),
           ),
-          Switch(value: value, onChanged: onChanged),
+          Switch(
+            value: value,
+            onChanged: onChanged,
+            activeColor: const Color(
+                0xFF104C91), // Set the active color to match the primary color
+          ),
         ],
       ),
     );
@@ -271,7 +287,10 @@ class _AccountPageState extends State<AccountPage> {
             const SizedBox(height: 12),
             const Text(
               "Your account will be temporarily disabled. You can reactivate it anytime by logging in again.",
-              style: TextStyle(fontSize: 14),
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.black,
+              ),
             ),
             const SizedBox(height: 20),
             ElevatedButton(
@@ -283,11 +302,26 @@ class _AccountPageState extends State<AccountPage> {
               ),
               onPressed: () {
                 Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Account Deactivated")),
+                // Replacing SnackBar with AlertDialog
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text("Success"),
+                      content: const Text("Account Deactivated"),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text("OK"),
+                        ),
+                      ],
+                    );
+                  },
                 );
               },
-              child: const Center(child: Text("Deactivate Now")),
+              child: const Center(
+                  child: Text("Deactivate Now",
+                      style: TextStyle(color: Colors.white))),
             ),
           ],
         ),
@@ -309,8 +343,21 @@ class _AccountPageState extends State<AccountPage> {
           TextButton(
             onPressed: () {
               Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("Account Deleted")),
+              // Replacing SnackBar with AlertDialog
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text("Success"),
+                    content: const Text("Account Deleted"),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text("OK"),
+                      ),
+                    ],
+                  );
+                },
               );
             },
             style: TextButton.styleFrom(foregroundColor: Colors.red),
@@ -349,7 +396,7 @@ class TwoStepVerificationPage extends StatelessWidget {
               controller: _questionController,
               decoration: const InputDecoration(
                 labelText: "Security Question",
-                hintText: "e.g., What’s your first pet’s name?",
+                hintText: "e.g., What's your first pet's name?",
                 border: OutlineInputBorder(),
               ),
             ),
@@ -371,10 +418,21 @@ class TwoStepVerificationPage extends StatelessWidget {
               ),
               onPressed: () {
                 Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text("Two-Step Verification Enabled"),
-                  ),
+                // Replacing SnackBar with AlertDialog
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text("Success"),
+                      content: const Text("Two-Step Verification Enabled"),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text("OK"),
+                        ),
+                      ],
+                    );
+                  },
                 );
               },
               child: const Center(child: Text("Enable Verification")),

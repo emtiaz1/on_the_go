@@ -3,13 +3,12 @@ import 'package:on_the_go_demo/homepage.dart';
 import 'package:on_the_go_demo/faqs.dart';
 import 'package:on_the_go_demo/about_us.dart';
 import 'package:on_the_go_demo/saved_posts.dart';
-import 'package:on_the_go_demo/language.dart';
 import 'package:on_the_go_demo/settings.dart';
 import 'package:on_the_go_demo/login_page.dart';
 
 class AppDrawer extends StatelessWidget {
   final Function(int)? onIndexSelected;
-  
+
   const AppDrawer({Key? key, this.onIndexSelected}) : super(key: key);
 
   @override
@@ -119,19 +118,8 @@ class AppDrawer extends StatelessWidget {
                 Navigator.pop(context);
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const SavedPostsPage()),
-                );
-              },
-            ),
-            _buildDrawerItem(
-              context,
-              icon: Icons.language,
-              text: 'Language',
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LanguagePage()),
+                  MaterialPageRoute(
+                      builder: (context) => const SavedPostsPage()),
                 );
               },
             ),
@@ -224,9 +212,7 @@ class _DrawerItemState extends State<_DrawerItem> {
         curve: Curves.easeInOut,
         transform: Matrix4.identity()..scale(_isHovered ? 1.02 : 1.0),
         decoration: BoxDecoration(
-          color: _isHovered
-              ? Colors.blue.shade50
-              : Colors.transparent,
+          color: _isHovered ? Colors.blue.shade50 : Colors.transparent,
           borderRadius: BorderRadius.circular(12),
           boxShadow: _isHovered
               ? [

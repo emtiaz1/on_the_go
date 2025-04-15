@@ -29,6 +29,16 @@ class NotificationSettingsPage extends StatelessWidget {
           ),
         ),
         backgroundColor: const Color(0xFF104C91), // Bluish AppBar
+        leading: IconButton(
+          icon: Image.asset(
+            'assets/icons/back.png',
+            color: Colors.white,
+            height: 24,
+          ),
+          onPressed: () {
+            Navigator.pop(context); // Navigate back to the previous screen
+          },
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -45,7 +55,7 @@ class NotificationSettingsPage extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              "Facebook may still send you important notifications about your account and content outside of your preferred notification settings.",
+              "On the Go may still send you important notifications about your account and content outside of your preferred notification settings.",
               style: TextStyle(color: Colors.black54), // Blackish text
             ),
             const SizedBox(height: 16),
@@ -72,7 +82,8 @@ class NotificationSettingsPage extends StatelessWidget {
                       ),
                       elevation: 2,
                       child: ListTile(
-                        leading: Icon(item['icon'], color: const Color(0xFF104C91)), // Bluish icon
+                        leading: Icon(item['icon'],
+                            color: const Color(0xFF104C91)), // Bluish icon
                         title: Text(
                           item['title'],
                           style: const TextStyle(
@@ -82,7 +93,8 @@ class NotificationSettingsPage extends StatelessWidget {
                         ),
                         subtitle: const Text(
                           'Push, Email, SMS',
-                          style: TextStyle(color: Colors.black54), // Blackish text
+                          style:
+                              TextStyle(color: Colors.black54), // Blackish text
                         ),
                         trailing: const Icon(
                           Icons.arrow_forward_ios,

@@ -19,9 +19,9 @@ class _MediaPageState extends State<MediaPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.lightBlue.shade50, // Light blue background
+      backgroundColor: Color(0xFFF3F7FA),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF007AFF), // Bluish AppBar
+        backgroundColor: const Color(0xFF104C91),
         title: const Text(
           'Media',
           style: TextStyle(
@@ -31,8 +31,14 @@ class _MediaPageState extends State<MediaPage> {
           ),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
+          icon: Image.asset(
+            'assets/icons/back.png',
+            color: Colors.white,
+            height: 24,
+          ),
+          onPressed: () {
+            Navigator.pop(context); // Navigate back to the previous screen
+          },
         ),
       ),
       body: ListView(
@@ -242,7 +248,8 @@ class _MediaPageState extends State<MediaPage> {
                     subtitle,
                     style: const TextStyle(
                       fontSize: 13,
-                      color: Colors.black54, // Darker gray for better visibility
+                      color:
+                          Colors.black54, // Darker gray for better visibility
                     ),
                   ),
                 ),
