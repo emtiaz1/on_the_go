@@ -60,7 +60,25 @@ class SavedPostsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Saved Posts'),
+        leading: IconButton(
+          icon: Image.asset(
+            'assets/icons/back.png',
+            color: Colors.white,
+            height: 24,
+          ),
+          onPressed: () {
+            Navigator.pop(context); // Navigate back to the previous screen
+          },
+        ),
+        title: const Text(
+          'Saved Posts',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 24,
+            color: Colors.white, // White text for contrast
+          ),
+        ),
+        backgroundColor: const Color(0xFF104C91),
       ),
       body: FutureBuilder<List<Map<String, dynamic>>>(
         future: fetchSavedPosts(),

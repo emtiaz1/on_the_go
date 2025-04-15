@@ -277,6 +277,30 @@ class _NewPostPageState extends State<NewPostPage> {
               ],
             ),
             const SizedBox(height: 20),
+
+            // Post Button with Full Width
+            SizedBox(
+              width: double.infinity, // Full width
+              child: ElevatedButton(
+                onPressed: _submitPost,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF104C91), // Blue button color
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 15), // Adjust vertical padding
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10), // Rounded corners
+                  ),
+                ),
+                child: const Text(
+                  'Post',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white, // White text color
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),
