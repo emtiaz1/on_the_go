@@ -8,8 +8,8 @@ class StoragePage extends StatefulWidget {
 }
 
 class _StoragePageState extends State<StoragePage> {
-  Color lightSkyBlue = const Color(0xFFE6F7FF);
-  Color primaryBlue = const Color(0xFF007AFF);
+  Color lightSkyBlue = const Color(0xFFF3F7FA);
+  Color primaryBlue = const Color(0xFF104C91);
   Color accentBlue = const Color(0xFF4DA6FF);
 
   // State variables for switches
@@ -28,10 +28,16 @@ class _StoragePageState extends State<StoragePage> {
     return Scaffold(
       backgroundColor: lightSkyBlue,
       appBar: AppBar(
-        backgroundColor: primaryBlue,
+        backgroundColor: Color(0xFF104C91),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
+          icon: Image.asset(
+            'assets/icons/back.png',
+            color: Colors.white,
+            height: 24,
+          ),
+          onPressed: () {
+            Navigator.pop(context); // Navigate back to the previous screen
+          },
         ),
         title: const Text(
           'Storage and Data',
@@ -59,8 +65,8 @@ class _StoragePageState extends State<StoragePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text("Storage Used",
-                    style: TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.bold)),
+                    style:
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 12),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -135,8 +141,8 @@ class _StoragePageState extends State<StoragePage> {
                     children: [
                       Text(
                         _mediaUploadQuality,
-                        style: const TextStyle(
-                            fontSize: 14, color: Colors.grey),
+                        style:
+                            const TextStyle(fontSize: 14, color: Colors.grey),
                       ),
                       const SizedBox(height: 4),
                       const Icon(Icons.settings, size: 16, color: Colors.grey),
@@ -166,14 +172,15 @@ class _StoragePageState extends State<StoragePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text("Data Usage",
-                    style: TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.bold)),
+                    style:
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: const [
                     Text("Total Data Used"),
-                    Text("14.58 GB", style: TextStyle(fontWeight: FontWeight.w600)),
+                    Text("14.58 GB",
+                        style: TextStyle(fontWeight: FontWeight.w600)),
                   ],
                 ),
                 const Divider(height: 24),
@@ -193,13 +200,15 @@ class _StoragePageState extends State<StoragePage> {
                 Center(
                   child: TextButton(
                     style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 6),
                       backgroundColor: Colors.red[50],
                       foregroundColor: Colors.red,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      textStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                      textStyle: const TextStyle(
+                          fontSize: 14, fontWeight: FontWeight.w500),
                     ),
                     onPressed: () {
                       setState(() {
@@ -258,7 +267,8 @@ class _StoragePageState extends State<StoragePage> {
   }
 
   void _showMediaUploadQualityDialog(BuildContext context) {
-    String selectedQuality = _mediaUploadQuality; // Initialize with the current value
+    String selectedQuality =
+        _mediaUploadQuality; // Initialize with the current value
 
     showDialog(
       context: context,
@@ -266,7 +276,8 @@ class _StoragePageState extends State<StoragePage> {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setDialogState) {
             return AlertDialog(
-              backgroundColor: const Color(0xFFE6F7FF), // Whitish-blue background color
+              backgroundColor:
+                  const Color(0xFFE6F7FF), // Whitish-blue background color
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16), // Rounded corners
               ),
@@ -291,24 +302,29 @@ class _StoragePageState extends State<StoragePage> {
                     groupValue: selectedQuality,
                     onChanged: (value) {
                       setDialogState(() {
-                        selectedQuality = value!; // Update the selected quality in the dialog
+                        selectedQuality =
+                            value!; // Update the selected quality in the dialog
                       });
                     },
                     title: const Text("Standard quality"),
                     subtitle: const Text("Faster to send, smaller file size"),
-                    activeColor: Colors.blue, // Active color for the radio button
+                    activeColor:
+                        Colors.blue, // Active color for the radio button
                   ),
                   RadioListTile<String>(
                     value: "HD quality",
                     groupValue: selectedQuality,
                     onChanged: (value) {
                       setDialogState(() {
-                        selectedQuality = value!; // Update the selected quality in the dialog
+                        selectedQuality =
+                            value!; // Update the selected quality in the dialog
                       });
                     },
                     title: const Text("HD quality"),
-                    subtitle: const Text("Slower to send, can be 6 times larger"),
-                    activeColor: Colors.blue, // Active color for the radio button
+                    subtitle:
+                        const Text("Slower to send, can be 6 times larger"),
+                    activeColor:
+                        Colors.blue, // Active color for the radio button
                   ),
                 ],
               ),
@@ -323,7 +339,8 @@ class _StoragePageState extends State<StoragePage> {
                 TextButton(
                   onPressed: () {
                     setState(() {
-                      _mediaUploadQuality = selectedQuality; // Update the main state variable
+                      _mediaUploadQuality =
+                          selectedQuality; // Update the main state variable
                     });
                     Navigator.pop(context); // Close the dialog
                   },

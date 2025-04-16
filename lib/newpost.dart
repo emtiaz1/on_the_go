@@ -119,32 +119,6 @@ class _NewPostPageState extends State<NewPostPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Create New Post',
-          style: TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-        elevation: 2,
-        backgroundColor: Color(0xFF104C91),
-        leading: Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-              icon: Image.asset(
-                height: 28,
-                'assets/icons/menus.png',
-                color: Colors.white,
-              ),
-              onPressed: () {
-                Scaffold.of(context).openDrawer();
-              },
-            );
-          },
-        ),
-      ),
       backgroundColor: const Color(0xFFF3F7FA),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -303,6 +277,30 @@ class _NewPostPageState extends State<NewPostPage> {
               ],
             ),
             const SizedBox(height: 20),
+
+            // Post Button with Full Width
+            SizedBox(
+              width: double.infinity, // Full width
+              child: ElevatedButton(
+                onPressed: _submitPost,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF104C91), // Blue button color
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 15), // Adjust vertical padding
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10), // Rounded corners
+                  ),
+                ),
+                child: const Text(
+                  'Post',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white, // White text color
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),

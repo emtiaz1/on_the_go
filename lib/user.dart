@@ -282,47 +282,6 @@ class _UserPageState extends State<UserPage> {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          children: [
-            Text(
-              'On the',
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                fontFamily: GoogleFonts.lobster().fontFamily,
-                color: Colors.white,
-              ),
-            ),
-            const SizedBox(width: 6),
-            Text(
-              'Go',
-              style: TextStyle(
-                fontSize: 30,
-                fontWeight: FontWeight.bold,
-                fontFamily: GoogleFonts.lobster().fontFamily,
-                color: OColors.lightRed,
-              ),
-            ),
-          ],
-        ),
-        elevation: 2,
-        backgroundColor: Color(0xFF104C91),
-        leading: Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-              icon: Image.asset(
-                height: 28,
-                'assets/icons/menus.png',
-                color: Colors.white,
-              ),
-              onPressed: () {
-                Scaffold.of(context).openDrawer();
-              },
-            );
-          },
-        ),
-      ),
       backgroundColor: Colors.grey.shade100,
       body: SingleChildScrollView(
         child: Column(

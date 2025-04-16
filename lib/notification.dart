@@ -83,7 +83,8 @@ class _NotificationPageState extends State<NotificationPage> {
             setState(() {
               notifications.insert(0, {
                 'name': "Someone", // Replace userName with "Someone"
-                'message': "Someone posted from ${data['location']} about ${data['tags']}",
+                'message':
+                    "Someone posted from ${data['location']} about ${data['tags']}",
                 'time': "Just now",
                 'post': data['content'],
                 'reaction': null,
@@ -99,6 +100,7 @@ class _NotificationPageState extends State<NotificationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+<<<<<<< HEAD
       backgroundColor: Colors.lightBlue.shade50, // Light blue background
       appBar: AppBar(
         backgroundColor: const Color(0xFF104C91), // Bluish AppBar
@@ -112,6 +114,9 @@ class _NotificationPageState extends State<NotificationPage> {
           ),
         ),
       ),
+=======
+      backgroundColor: Color(0xFFF3F7FA), // Light blue background
+>>>>>>> e6b66ad3606a5cb7657c5d54e5cd952ea97a006b
       body: notifications.isEmpty
           ? const Center(
               child: Text(
@@ -213,7 +218,8 @@ class _NotificationPageState extends State<NotificationPage> {
                   },
                 ),
                 ListTile(
-                  leading: const Icon(Icons.notifications_off, color: Colors.black),
+                  leading:
+                      const Icon(Icons.notifications_off, color: Colors.black),
                   title: const Text(
                     "Turn off notifications",
                     style: TextStyle(color: Colors.black),

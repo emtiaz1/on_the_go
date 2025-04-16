@@ -40,17 +40,26 @@ class FaqsPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: Image.asset(
+            'assets/icons/back.png',
+            color: Colors.white,
+            height: 24,
+          ),
+          onPressed: () {
+            Navigator.pop(context); // Navigate back to the previous screen
+          },
+        ),
         title: const Text(
           'FAQs',
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            fontSize: 20,
+            fontSize: 24,
             color: Colors.white, // White text for contrast
           ),
         ),
         backgroundColor: const Color(0xFF104C91), // Blue background for AppBar
         elevation: 1,
-        centerTitle: true,
         iconTheme: const IconThemeData(color: Colors.white), // White icons
       ),
       body: Container(

@@ -5,9 +5,9 @@ class PrivacyPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color background = const Color(0xFFF1FFF5);
+    Color background = const Color(0xFFF3F7FA);
     Color tileColor = Colors.white;
-    Color primaryGreen = const Color(0xFF34A853);
+    Color primaryGreen = const Color(0xFF104C91);
     Color subtitleColor = Colors.grey.shade600;
 
     return Scaffold(
@@ -23,8 +23,14 @@ class PrivacyPage extends StatelessWidget {
         ),
         backgroundColor: primaryGreen,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
+          icon: Image.asset(
+            'assets/icons/back.png',
+            color: Colors.white,
+            height: 24,
+          ),
+          onPressed: () {
+            Navigator.pop(context); // Navigate back to the previous screen
+          },
         ),
       ),
       body: ListView(
@@ -47,7 +53,6 @@ class PrivacyPage extends StatelessWidget {
             subtitle: "Control who can see when you're online.",
             icon: Icons.visibility_outlined,
           ),
-
           const SizedBox(height: 20),
           _sectionHeader("Location Sharing"),
           _customTile(
@@ -60,7 +65,6 @@ class PrivacyPage extends StatelessWidget {
             subtitle: "Configure zones for movement notifications.",
             icon: Icons.map_outlined,
           ),
-
           const SizedBox(height: 20),
           _sectionHeader("Interactions"),
           _customTile(
@@ -73,7 +77,6 @@ class PrivacyPage extends StatelessWidget {
             subtitle: "Choose who is allowed to send you messages.",
             icon: Icons.message_outlined,
           ),
-
           const SizedBox(height: 20),
           _sectionHeader("Permissions"),
           _customTile(
@@ -92,15 +95,14 @@ class PrivacyPage extends StatelessWidget {
               activeColor: primaryGreen,
             ),
           ),
-
           const SizedBox(height: 30),
           Center(
             child: TextButton(
               onPressed: () {},
               child: const Text(
                 "View Full Privacy Policy",
-                style: TextStyle(
-                    color: Colors.blue, fontWeight: FontWeight.w600),
+                style:
+                    TextStyle(color: Colors.blue, fontWeight: FontWeight.w600),
               ),
             ),
           ),
@@ -131,7 +133,7 @@ class PrivacyPage extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(icon, color: Colors.green.shade700, size: 26),
+          Icon(icon, color: Color(0xFF104C91), size: 26),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
@@ -139,8 +141,8 @@ class PrivacyPage extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style:
-                      const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                  style: const TextStyle(
+                      fontSize: 15, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 4),
                 Text(
