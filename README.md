@@ -67,4 +67,4 @@ cd on_the_go
 - **Screenshots**: [View Screenshots](https://drive.google.com/drive/folders/1FI5-lxwIch6tJQDTT72Lgejti8Li27rr?usp=sharing)
 - **Demo Video**: [Watch Demo](https://drive.google.com/file/d/136a9BeX3kQN3NNGYLphhY4oVkc03e2uQ/view?usp=drive_link)
 - **APK Download**: [Download APK](https://drive.google.com/file/d/1GQpT3Do3ty38cfkTDFKDT2fkiKWl-UQ_/view?usp=drive_link)
-- **Project Report**: [View Report](https://drive.google.com/drive/folders/1yEPyvgd7A_kmEFURUsDIPo-bxllk3p_A?usp=drive_link)
+- **Project Report**: [View Report](https://drive.google.com/file/d/1X7RP9aC14APODg14R3r2Z9YB7MlVRnb9/view?usp=drive_link)
